@@ -1,0 +1,51 @@
+<section class="hero">
+  <div class="hero-content">
+    <h2>Muñecos de crochet personalizables</h2>
+    <p>Explora nuestra colección de muñecos tejidos a mano y personaliza cada detalle para crear un regalo único.</p>
+  </div>
+</section>
+
+<div class="products-grid">
+  <div *ngIf="loading" class="loading-spinner">
+    <span>Cargando productos...</span>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error && filteredProducts.length === 0" class="no-products">
+    No se encontraron productos con los filtros seleccionados.
+  </div>
+
+  <div *ngFor="let product of filteredProducts" class="product-card"
+    [class.product-card--disabled]="product.isAvailable === false">
+    <div class="product-image">
+      <img [src]="product.imageUrl || 'assets/images/default-doll.svg'" [alt]="product.name">
+    </div>
+    <div class="product-info">
+      <h3 class="product-name">{{ product.name }}</h3>
+      <p class="product-category">{{ product.category }} | {{ product.targetAudience }}</p>
+      <p class="product-price">{{ product.price | currency:'COP':'symbol':'1.0-0' }}</p>
+      <p class="product-description">{{ product.description | slice:0:140 }}{{ product.description.length > 140 ? '...'
+        : '' }}</p>
+      <div class="product-customizations" *ngIf="product.customizations?.length">
+        <span class="pill" *ngFor="let customization of product.customizations">{{ customization.label }}</span>
+      </div>
+      <div class="product-meta">
+        <span *ngIf="product.productionTimeDays">Tiempo estimado: {{ product.productionTimeDays }} día{{
+          product.productionTimeDays === 1 ? '' : 's' }}</span>
+        <span *ngIf="product.materials as materials">Incluye: {{ materials | slice:0:2 }}{{ materials.length > 2 ? ',
+          ...' : '' }}</span>
+      </div>
+      <div class="product-actions">
+        <button class="view-details-button" [routerLink]="['/productos', product.id]">Ver detalles</button>
+        <button class="add-to-cart-button" (click)="addToCart(product)">Añadir al carrito</button>
+      </div>
+      <div class="product-tags" *ngIf="product.tags?.length">
+        <span class="tag" *ngFor="let tag of product.tags">#{{ tag }}</span>
+      </div>
+      <p class="availability" *ngIf="product.isAvailable === false">Producción temporalmente agotada</p>
+    </div>
+  </div>
+</div>

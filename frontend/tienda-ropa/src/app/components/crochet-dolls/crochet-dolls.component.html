@@ -1,0 +1,36 @@
+<div class="dolls-container">
+  <h2>Muñecos de Crochet</h2>
+  <p class="dolls-intro">Descubre nuestra colección de muñecos tejidos a mano con amor y dedicación.</p>
+  
+  <div *ngIf="loading" class="loading">
+    <p>Cargando muñecos...</p>
+  </div>
+  
+  <div *ngIf="error" class="error">
+    <p>Ha ocurrido un error al cargar los muñecos. Por favor, intenta nuevamente.</p>
+  </div>
+  
+  <div *ngIf="!loading && !error && dolls.length === 0" class="no-dolls">
+    <p>No hay muñecos disponibles en este momento.</p>
+  </div>
+  
+  <div *ngIf="!loading && !error && dolls.length > 0" class="dolls-grid">
+    <div *ngFor="let doll of dolls" class="doll-card">
+      <div class="doll-image">
+        <img [src]="doll.imageUrl || 'assets/images/default-doll.svg'" [alt]="doll.name">
+      </div>
+      <div class="doll-info">
+        <h3>{{ doll.name }}</h3>
+        <p class="doll-description">{{ doll.description }}</p>
+        <div class="doll-details">
+          <span class="doll-difficulty" *ngIf="doll.difficulty">Dificultad: {{ doll.difficulty }}</span>
+          <span class="doll-price">{{ doll.price | currency:'EUR' }}</span>
+        </div>
+        <div class="doll-actions">
+          <button class="btn-details" [routerLink]="['/producto', doll._id]">Ver detalles</button>
+          <button class="btn-add-cart" (click)="addToCart(doll)">Añadir al carrito</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

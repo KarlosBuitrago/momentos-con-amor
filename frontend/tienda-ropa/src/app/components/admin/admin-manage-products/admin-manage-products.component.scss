@@ -1,0 +1,249 @@
+.manage-products-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 2rem;
+
+  h2 {
+    font-size: 2rem;
+    color: #333;
+    margin: 0;
+  }
+}
+
+.status-message {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+
+  &.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+
+  &.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+}
+
+.filters-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+
+  .search-box {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+
+    &:focus {
+      outline: none;
+      border-color: #ff69b4;
+    }
+  }
+
+  .category-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    label {
+      font-weight: 500;
+      color: #555;
+    }
+
+    .category-select {
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+
+      &:focus {
+        outline: none;
+        border-color: #ff69b4;
+      }
+    }
+  }
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.no-results {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #999;
+}
+
+.product-card {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #fff;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .product-image {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+  }
+
+  .product-info {
+    flex: 1;
+
+    h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.5rem;
+      color: #333;
+    }
+
+    .product-category {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background-color: #f0f0f0;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+
+    .product-description {
+      color: #666;
+      margin: 0.5rem 0;
+      line-height: 1.5;
+    }
+
+    .product-details {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+
+      .product-price {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #ff69b4;
+      }
+
+      .product-stock {
+        padding: 0.25rem 0.75rem;
+        background-color: #e3f2fd;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        color: #1976d2;
+      }
+
+      .product-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        font-weight: 500;
+
+        &.available {
+          background-color: #d4edda;
+          color: #155724;
+        }
+
+        &.unavailable {
+          background-color: #f8d7da;
+          color: #721c24;
+        }
+      }
+    }
+  }
+
+  .product-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    justify-content: center;
+
+    button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+
+      &.btn-edit {
+        background-color: #4caf50;
+        color: white;
+
+        &:hover {
+          background-color: #45a049;
+        }
+      }
+
+      &.btn-delete {
+        background-color: #f44336;
+        color: white;
+
+        &:hover {
+          background-color: #da190b;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .product-card {
+    flex-direction: column;
+
+    .product-image {
+      width: 100%;
+      height: 200px;
+    }
+
+    .product-actions {
+      flex-direction: row;
+
+      button {
+        flex: 1;
+      }
+    }
+  }
+}

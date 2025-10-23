@@ -1,0 +1,77 @@
+<div class="manage-products-container">
+  <div class="header">
+    <h2>Gestionar Productos</h2>
+  </div>
+
+  <!-- Mensajes de estado -->
+  <div *ngIf="statusMessage" class="status-message" [class.success]="statusType === 'success'" [class.error]="statusType === 'error'">
+    {{ statusMessage }}
+  </div>
+
+  <!-- Filtros y búsqueda -->
+  <div class="filters-section">
+    <div class="search-box">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
+        placeholder="Buscar por nombre, descripción o ID..."
+        class="search-input"
+      />
+    </div>
+
+    <div class="category-filter">
+      <label for="category-select">Categoría:</label>
+      <select
+        id="category-select"
+        [(ngModel)]="selectedCategory"
+        (ngModelChange)="onCategoryChange()"
+        class="category-select"
+      >
+        <option *ngFor="let cat of categories" [value]="cat === 'Todos' ? '' : cat">
+          {{ cat }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div *ngIf="isLoading" class="loading">
+    Cargando productos...
+  </div>
+
+  <!-- Lista de productos -->
+  <div *ngIf="!isLoading" class="products-list">
+    <div *ngIf="filteredProducts.length === 0" class="no-results">
+      No se encontraron productos
+    </div>
+
+    <div *ngFor="let product of filteredProducts" class="product-card">
+      <div class="product-image">
+        <img [src]="product.imageUrl" [alt]="product.name" />
+      </div>
+
+      <div class="product-info">
+        <h3>{{ product.name }}</h3>
+        <p class="product-category">{{ product.category }}</p>
+        <p class="product-description">{{ product.description }}</p>
+        <div class="product-details">
+          <span class="product-price">${{ product.price | number }}</span>
+          <span class="product-stock">Stock: {{ product.stock }}</span>
+          <span class="product-status" [class.available]="product.isAvailable" [class.unavailable]="!product.isAvailable">
+            {{ product.isAvailable ? 'Disponible' : 'No disponible' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="product-actions">
+        <button (click)="editProduct(product)" class="btn-edit">
+          Editar
+        </button>
+        <button (click)="deleteProduct(product)" class="btn-delete">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

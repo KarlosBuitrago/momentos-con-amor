@@ -1,0 +1,154 @@
+.dolls-container {
+  padding: 2rem 0;
+  
+  h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  .dolls-intro {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    color: #666;
+  }
+}
+
+.loading, .error, .no-dolls {
+  text-align: center;
+  padding: 2rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.error {
+  background: #fff0f0;
+  color: #d32f2f;
+}
+
+.dolls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.doll-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: white;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  .doll-image {
+    height: 280px;
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+      
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+  
+  .doll-info {
+    padding: 1.5rem;
+    
+    h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      color: #333;
+      font-size: 1.3rem;
+    }
+    
+    .doll-description {
+      color: #666;
+      margin-bottom: 1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .doll-details {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      
+      .doll-difficulty {
+        background: #fff8e1;
+        padding: 0.3rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        color: #ff8f00;
+      }
+      
+      .doll-price {
+        font-weight: bold;
+        color: #333;
+        font-size: 1.1rem;
+      }
+    }
+    
+    .doll-actions {
+      display: flex;
+      gap: 1rem;
+      
+      button {
+        flex: 1;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s;
+      }
+      
+      .btn-details {
+        background-color: #f5f5f5;
+        color: #333;
+        
+        &:hover {
+          background-color: #e0e0e0;
+        }
+      }
+      
+      .btn-add-cart {
+        background-color: #39c5f8;
+        color: white;
+        
+        &:hover {
+          background-color: #2bb5e8;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .dolls-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .dolls-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .doll-actions {
+    flex-direction: column;
+  }
+}

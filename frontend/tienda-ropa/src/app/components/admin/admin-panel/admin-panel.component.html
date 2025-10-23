@@ -1,0 +1,42 @@
+<div class="admin-panel" *ngIf="!loading; else loadingState">
+  <ng-container *ngIf="isAdmin; else noAccess">
+    <header class="admin-header">
+      <div>
+        <h1>Panel administrativo</h1>
+        <p>Gestiona los productos de tu tienda</p>
+      </div>
+      <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+    </header>
+
+    <nav class="admin-tabs">
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'manage'"
+        (click)="setActiveTab('manage')">
+        Gestionar productos
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'add'"
+        (click)="setActiveTab('add')">
+        Agregar producto
+      </button>
+    </nav>
+
+    <section class="admin-content">
+      <app-admin-manage-products *ngIf="activeTab === 'manage'"></app-admin-manage-products>
+      <app-admin-add-product *ngIf="activeTab === 'add'"></app-admin-add-product>
+    </section>
+  </ng-container>
+</div>
+
+<ng-template #loadingState>
+  <div class="admin-panel loading">Validando acceso…</div>
+</ng-template>
+
+<ng-template #noAccess>
+  <div class="admin-panel no-access">
+    <h2>Acceso restringido</h2>
+    <p>No tienes permisos para acceder al panel administrativo.</p>
+  </div>
+</ng-template>

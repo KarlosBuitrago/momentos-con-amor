@@ -1,0 +1,208 @@
+<div class="admin-edit-product">
+  <div class="header">
+    <h2>Editar producto</h2>
+    <p>Actualiza la información del producto. Los campos marcados con * son obligatorios.</p>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    Cargando producto...
+  </div>
+
+  <form *ngIf="!isLoading" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <!-- INFORMACIÓN GENERAL -->
+    <section class="form-card">
+      <h3>Información general</h3>
+      <div class="field-grid">
+        <div class="field" [class.invalid]="isInvalid('name')">
+          <label for="name">Nombre *</label>
+          <input id="name" type="text" formControlName="name" autocomplete="off" placeholder="Ej. Unicornio de Sueños">
+          <small *ngIf="isInvalid('name')">Ingresa un nombre para el producto.</small>
+        </div>
+
+        <div class="field" [class.invalid]="isInvalid('category')">
+          <label for="category">Categoría *</label>
+          <select id="category" formControlName="category">
+            <option *ngFor="let option of categoryOptions" [value]="option.value">{{ option.label }}</option>
+          </select>
+        </div>
+
+        <div class="field" [class.invalid]="isInvalid('targetAudience')">
+          <label for="targetAudience">Público objetivo *</label>
+          <select id="targetAudience" formControlName="targetAudience">
+            <option *ngFor="let audience of targetAudienceOptions" [value]="audience">{{ audience }}</option>
+          </select>
+          <small *ngIf="isInvalid('targetAudience')">Selecciona el público objetivo.</small>
+        </div>
+
+        <div class="field" *ngIf="isDoll" [class.invalid]="isInvalid('dollGender')">
+          <label for="dollGender">Género del muñeco</label>
+          <select id="dollGender" formControlName="dollGender">
+            <option *ngFor="let gender of genderOptions" [value]="gender">{{ gender }}</option>
+          </select>
+        </div>
+
+        <div class="field" [class.invalid]="isInvalid('price')">
+          <label for="price">Precio (COP) *</label>
+          <input id="price" type="number" min="0" step="1000" formControlName="price" placeholder="68000">
+          <small *ngIf="isInvalid('price')">Define el precio de venta.</small>
+        </div>
+
+        <div class="field full" [class.invalid]="isInvalid('description')">
+          <label for="description">Descripción *</label>
+          <textarea id="description" rows="3" formControlName="description" placeholder="Unicornio tejido con crin multicolor y detalles brillantes. Incluye base estable y bolsa protectora."></textarea>
+          <small *ngIf="isInvalid('description')">Incluye una descripción entre 10 y 700 caracteres.</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- IMÁGENES -->
+    <section class="form-card">
+      <h3>Imágenes</h3>
+      <div class="field-grid">
+        <div class="field" [class.invalid]="isInvalid('imageUrl')">
+          <label for="imageUrl">URL de la imagen principal *</label>
+          <input id="imageUrl" type="text" formControlName="imageUrl" placeholder="assets/images/imagen 5.jpg">
+          <small *ngIf="isInvalid('imageUrl')">Proporciona la ruta o URL de la imagen principal.</small>
+        </div>
+
+        <div class="image-preview">
+          <span>Vista previa</span>
+          <img [src]="form.get('imageUrl')?.value || defaultImage" alt="Previsualización del producto" loading="lazy">
+        </div>
+      </div>
+
+      <h4>Galería de imágenes adicionales</h4>
+      <p class="helper-text">Agrega más imágenes para mostrar diferentes ángulos del producto.</p>
+      <div formArrayName="imageGallery" class="array-wrapper">
+        <div class="array-row" *ngFor="let control of imageGallery.controls; let i = index; trackBy: trackByIndex">
+          <input [formControlName]="i" type="text" placeholder="assets/images/imagen 6.jpg">
+          <button type="button" (click)="removeImageGalleryField(i)">Eliminar</button>
+        </div>
+      </div>
+      <button type="button" class="btn-secondary" (click)="addImageGalleryField()">Agregar imagen</button>
+    </section>
+
+    <!-- MATERIALES -->
+    <section class="form-card">
+      <h3>Materiales *</h3>
+      <p class="helper-text">Describe con qué materiales está elaborado el producto.</p>
+      <div formArrayName="madeWith" class="array-wrapper">
+        <div class="array-row" *ngFor="let control of madeWith.controls; let i = index; trackBy: trackByIndex">
+          <input [formControlName]="i" type="text" placeholder="Ej. Hilo hipoalergénico">
+          <button type="button" (click)="removeMadeWithField(i)" [disabled]="madeWith.length === 1">Eliminar</button>
+        </div>
+      </div>
+      <button type="button" class="btn-secondary" (click)="addMadeWithField()">Agregar material</button>
+    </section>
+
+    <!-- PERSONALIZACIONES -->
+    <section class="form-card" *ngIf="isDoll">
+      <h3>Opciones de personalización</h3>
+      <div class="toggle-row">
+        <label>
+          <input type="checkbox" formControlName="allowPersonalization">
+          Permitir personalizaciones
+        </label>
+      </div>
+
+      <h4>Personalizaciones disponibles</h4>
+      <p class="helper-text">Define las opciones de personalización que el cliente puede agregar (bordados, accesorios, empaques especiales, etc.).</p>
+      <div formArrayName="customizations" class="customizations-wrapper">
+        <div class="customization-card" *ngFor="let customGroup of customizations.controls; let i = index; trackBy: trackByIndex" [formGroupName]="i">
+          <div class="customization-fields">
+            <div class="field">
+              <label>Nombre de la personalización *</label>
+              <input type="text" formControlName="label" placeholder="Ej. Luces led interiores">
+            </div>
+            <div class="field">
+              <label>Precio adicional (COP)</label>
+              <input type="number" min="0" step="500" formControlName="price" placeholder="9000">
+            </div>
+            <div class="field checkbox-field">
+              <label>
+                <input type="checkbox" formControlName="defaultSelected">
+                Seleccionada por defecto
+              </label>
+            </div>
+          </div>
+          <button type="button" class="btn-remove" (click)="removeCustomizationField(i)">Eliminar</button>
+        </div>
+      </div>
+      <button type="button" class="btn-secondary" (click)="addCustomizationField()">Agregar personalización</button>
+    </section>
+
+    <!-- KIT -->
+    <section class="form-card" *ngIf="isDoll">
+      <h3>Kit para armar</h3>
+      <div class="toggle-row">
+        <label>
+          <input type="checkbox" formControlName="isKit">
+          Este muñeco se vende como kit para armar
+        </label>
+      </div>
+
+      <div class="kit-card" *ngIf="showKitSection" formArrayName="kitIncludes">
+        <h4>Contenido del kit *</h4>
+        <p class="helper-text">Enumera los elementos que el cliente recibirá para armar el muñeco.</p>
+        <div class="array-wrapper">
+          <div class="array-row" *ngFor="let control of kitIncludes.controls; let i = index; trackBy: trackByIndex">
+            <input [formControlName]="i" type="text" placeholder="Ej. Ganchillo 3.5mm">
+            <button type="button" (click)="removeKitIncludeField(i)">Eliminar</button>
+          </div>
+        </div>
+        <button type="button" class="btn-secondary" (click)="addKitIncludeField()">Agregar elemento</button>
+      </div>
+    </section>
+
+    <!-- ETIQUETAS -->
+    <section class="form-card">
+      <h3>Etiquetas (Tags)</h3>
+      <p class="helper-text">Agrega palabras clave para facilitar la búsqueda del producto (ej. unicornio, fantasía, luces).</p>
+      <div formArrayName="tags" class="array-wrapper">
+        <div class="array-row" *ngFor="let control of tags.controls; let i = index; trackBy: trackByIndex">
+          <input [formControlName]="i" type="text" placeholder="Ej. unicornio" maxlength="50">
+          <button type="button" (click)="removeTagField(i)">Eliminar</button>
+        </div>
+      </div>
+      <button type="button" class="btn-secondary" (click)="addTagField()">Agregar etiqueta</button>
+    </section>
+
+    <!-- INVENTARIO Y PRODUCCIÓN -->
+    <section class="form-card">
+      <h3>Inventario y producción</h3>
+      <div class="field-grid">
+        <div class="field" [class.invalid]="isInvalid('stock')">
+          <label for="stock">Stock disponible *</label>
+          <input id="stock" type="number" min="0" formControlName="stock" placeholder="4">
+          <small *ngIf="isInvalid('stock')">Indica las unidades disponibles.</small>
+        </div>
+
+        <div class="field">
+          <label for="productionTimeDays">Tiempo estimado de producción (días)</label>
+          <input id="productionTimeDays" type="number" min="1" formControlName="productionTimeDays" placeholder="10">
+          <small>Tiempo que toma producir el producto bajo pedido.</small>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <label>
+          <input type="checkbox" formControlName="isAvailable">
+          Producto disponible para la venta
+        </label>
+        <small class="helper-text">Si está desmarcado, se mostrará como "Producción temporalmente agotada"</small>
+      </div>
+    </section>
+
+    <!-- ACCIONES -->
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="form.invalid || isSubmitting">
+        {{ isSubmitting ? 'Guardando…' : 'Actualizar producto' }}
+      </button>
+      <button type="button" class="btn-ghost" (click)="cancel()" [disabled]="isSubmitting">Cancelar</button>
+    </div>
+  </form>
+
+  <div class="status" *ngIf="statusMessage" [class.success]="statusType === 'success'" [class.error]="statusType === 'error'">
+    {{ statusMessage }}
+  </div>
+</div>

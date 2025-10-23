@@ -1,0 +1,30 @@
+services:
+  # Backend API
+  - type: web
+    name: tienda-ropa-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: GOOGLE_APPLICATION_CREDENTIALS
+        value: /app/firebase-credentials.json
+    # Aquí deberás subir tu archivo de credenciales de Firebase como secret file
+
+  # Frontend Static Site
+  - type: web
+    name: tienda-ropa-frontend
+    env: docker
+    dockerfilePath: ./frontend/tienda-ropa/Dockerfile
+    dockerContext: ./frontend/tienda-ropa
+    envVars:
+      - key: API_URL
+        fromService:
+          type: web
+          name: tienda-ropa-backend
+          envVarKey: RENDER_EXTERNAL_URL

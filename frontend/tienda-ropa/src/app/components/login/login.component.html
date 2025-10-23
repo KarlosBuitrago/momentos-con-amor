@@ -1,0 +1,49 @@
+<div class="login-container">
+  <div class="login-card">
+    <h2>Iniciar Sesión</h2>
+    <p class="subtitle">Panel de Administración</p>
+
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="admin@tiendaropa.com"
+          required
+          [disabled]="loading"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input
+          type="password"
+          id="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="••••••••"
+          required
+          [disabled]="loading"
+        >
+      </div>
+
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+
+      <button type="submit" class="login-button" [disabled]="loading">
+        <span *ngIf="!loading">Iniciar Sesión</span>
+        <span *ngIf="loading">Iniciando sesión...</span>
+      </button>
+    </form>
+
+    <div class="login-info">
+      <p>Credenciales de prueba:</p>
+      <p><strong>Email:</strong> admin&#64;tiendaropa.com</p>
+      <p><strong>Password:</strong> Admin123!</p>
+    </div>
+  </div>
+</div>
