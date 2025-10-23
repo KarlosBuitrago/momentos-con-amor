@@ -37,7 +37,7 @@ git push origin main
    - **Name**: `tienda-ropa-backend`
    - **Environment**: `Docker`
    - **Dockerfile Path**: `./backend/Dockerfile`
-   - **Docker Context**: `./backend`
+   - **Docker Context**: `./backend` ⚠️ **MUY IMPORTANTE**
    - **Instance Type**: `Free` ⭐ (IMPORTANTE: Selecciona FREE)
 
 5. **Variables de Entorno** (Add Environment Variable):
@@ -49,6 +49,12 @@ git push origin main
    ```
 
 6. Click en **"Create Web Service"**
+
+**NOTA CRÍTICA**: Si ya creaste el servicio y olvidaste el Docker Context, debes:
+
+- Ir a **Settings** → **Build & Deploy**
+- Cambiar **Docker Context** a `./backend`
+- Click en **"Save Changes"**
 
 ### Paso 3: Configurar Secret File para Firebase (GRATIS)
 
@@ -76,7 +82,7 @@ git push origin main
    - **Name**: `tienda-ropa-frontend`
    - **Environment**: `Docker`
    - **Dockerfile Path**: `./frontend/tienda-ropa/Dockerfile`
-   - **Docker Context**: `./frontend/tienda-ropa`
+   - **Docker Context**: `./frontend/tienda-ropa` ⚠️ **MUY IMPORTANTE**
    - **Instance Type**: `Free` ⭐ (IMPORTANTE: Selecciona FREE)
 
 4. **Variables de Entorno** (Add Environment Variable):
@@ -89,6 +95,12 @@ git push origin main
    ⚠️ Reemplaza con la URL real de tu backend del Paso 4
 
 5. Click en **"Create Web Service"**
+
+**NOTA CRÍTICA**: Si ya creaste el servicio y olvidaste el Docker Context, debes:
+
+- Ir a **Settings** → **Build & Deploy**
+- Cambiar **Docker Context** a `./frontend/tienda-ropa`
+- Click en **"Save Changes"**
 
 ### Paso 6: Verificar Deployment
 

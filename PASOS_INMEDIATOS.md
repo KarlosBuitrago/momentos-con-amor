@@ -8,38 +8,50 @@ He corregido **ambos** Dockerfiles (backend y frontend) para que funcionen en Re
 
 ## 📝 Lo Que Debes Hacer AHORA:
 
-### 1️⃣ Hacer Commit y Push (2 minutos)
+### 1️⃣ ARREGLAR Docker Context en Render (1 minuto) ⚠️ CRÍTICO
+
+**Backend:**
+1. Ve a tu servicio `tienda-ropa-backend` en Render
+2. Click en **Settings** → **Build & Deploy**
+3. Cambia **Docker Context** a: `./backend`
+4. Click en **Save Changes**
+
+**Frontend:**
+1. Ve a tu servicio `tienda-ropa-frontend` en Render
+2. Click en **Settings** → **Build & Deploy**
+3. Cambia **Docker Context** a: `./frontend/tienda-ropa`
+4. Click en **Save Changes**
+
+Render re-desplegará automáticamente ambos servicios.
+
+---
+
+### 2️⃣ Hacer Commit y Push (OPCIONAL - ya no es necesario)
+
+Los Dockerfiles ya están bien. Si quieres asegurar que tienes la última versión:
 
 ```bash
 git add .
-git commit -m "Fix: Dockerfiles para Render - cambiar npm ci por npm install"
+git commit -m "Fix: Dockerfiles para Render"
 git push
 ```
 
 ---
 
-### 2️⃣ Re-desplegar Backend en Render (3 minutos)
+### 3️⃣ Esperar el Re-deployment (5-10 minutos)
 
-1. Ve a [Render Dashboard](https://dashboard.render.com/)
-2. Click en tu servicio **`tienda-ropa-backend`**
-3. Click en **"Manual Deploy"** (botón azul arriba a la derecha)
-4. Selecciona **"Deploy latest commit"**
-5. Espera 2-3 minutos
-6. Verifica que diga **"Live"** en verde
+Después de cambiar el Docker Context, Render automáticamente re-desplegará:
+- Backend: 2-3 minutos
+- Frontend: 5-7 minutos
 
-**Prueba**: Abre `https://tienda-ropa-backend.onrender.com/` en tu navegador
+**Monitorea el progreso:**
+- Click en **"Logs"** para ver el deployment en tiempo real
+- Espera a que el estado cambie a **"Live"** (verde)
+
+**Prueba Backend**: `https://tienda-ropa-backend.onrender.com/`
 - Deberías ver: `{"message": "API de Tienda de muñecos funcionando correctamente"}`
 
----
-
-### 3️⃣ Re-desplegar Frontend en Render (7 minutos)
-
-1. En Render Dashboard, click en **`tienda-ropa-frontend`**
-2. Click en **"Manual Deploy"** → **"Deploy latest commit"**
-3. Espera 5-7 minutos (Angular tarda más en compilar)
-4. Verifica que diga **"Live"** en verde
-
-**Prueba**: Abre `https://tienda-ropa-frontend.onrender.com/` en tu navegador
+**Prueba Frontend**: `https://tienda-ropa-frontend.onrender.com/`
 - Deberías ver tu tienda funcionando
 
 ---
