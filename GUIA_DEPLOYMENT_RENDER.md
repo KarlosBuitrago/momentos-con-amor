@@ -165,32 +165,44 @@ Prueba: `http://localhost:4000`
 
 ## ⚠️ Problemas Comunes
 
-### 1. Error: "Cannot find module firebase-admin"
+### 1. Error: "npm ci can only install with an existing package-lock.json"
+
+**Solución**: Ya está arreglado en el Dockerfile. Si persiste:
+
+```bash
+cd backend
+npm install
+git add package-lock.json
+git commit -m "Agregar package-lock.json"
+git push
+```
+
+### 2. Error: "Cannot find module firebase-admin"
 
 **Solución**: Verifica que `firebase-admin` esté en `backend/package.json` dependencies
 
-### 2. Error: "GOOGLE_APPLICATION_CREDENTIALS not found"
+### 3. Error: "GOOGLE_APPLICATION_CREDENTIALS not found"
 
 **Solución**:
 
 - Verifica que el Secret File esté configurado correctamente
 - El path debe ser exactamente: `/app/react-firebase-dbc76-firebase-adminsdk-z2n37-911e39435e.json`
 
-### 3. CORS Errors en el Frontend
+### 4. CORS Errors en el Frontend
 
 **Solución**:
 
 - Actualiza la configuración de CORS en `backend/src/index.js`
 - Agrega la URL de tu frontend de Render
 
-### 4. Build Failure en Frontend
+### 5. Build Failure en Frontend
 
 **Solución**:
 
 - Verifica que `npm run build` funcione localmente
 - Revisa los logs de build en Render
 
-### 5. Servicio "dormido" (Plan Free)
+### 6. Servicio "dormido" (Plan Free)
 
 **Comportamiento normal**: Los servicios gratuitos se duermen después de 15 minutos de inactividad
 

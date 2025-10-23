@@ -4,11 +4,12 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copiar package.json y package-lock.json
-COPY package*.json ./
+# Copiar archivos de dependencias
+COPY package.json ./
+COPY package-lock.json ./
 
-# Instalar dependencias
-RUN npm ci
+# Instalar todas las dependencias (necesarias para el build)
+RUN npm install
 
 # Copiar el código fuente
 COPY . .
@@ -23,13 +24,14 @@ WORKDIR /app
 
 # Copiar los archivos compilados desde la etapa de build
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/package-lock.json ./
 
 # Instalar solo dependencias de producción
-RUN npm ci --only=production
+RUN npm install --production
 
 # Exponer el puerto (Render usa la variable PORT dinámica)
-EXPOSE ${PORT:-4000}
+EXPOSE 4000
 
 # Comando para iniciar el servidor SSR
 CMD ["npm", "run", "serve:ssr:tienda-ropa"]
