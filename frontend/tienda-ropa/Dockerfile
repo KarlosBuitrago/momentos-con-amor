@@ -22,24 +22,14 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Instalar solo express para servir archivos estáticos
-RUN npm install express
+# Instalar express versión compatible
+RUN npm install express@4.18.2
 
 # Copiar los archivos compilados desde la etapa de build
 COPY --from=builder /app/dist/tienda-ropa/browser ./dist
 
-# Crear servidor simple
-RUN echo 'const express = require("express"); \
-const path = require("path"); \
-const app = express(); \
-const PORT = process.env.PORT || 4000; \
-app.use(express.static(path.join(__dirname, "dist"))); \
-app.get("*", (req, res) => { \
-  res.sendFile(path.join(__dirname, "dist", "index.html")); \
-}); \
-app.listen(PORT, "0.0.0.0", () => { \
-  console.log(`Server running on port ${PORT}`); \
-});' > server.js
+# Copiar el servidor
+COPY server.js ./
 
 # Exponer el puerto
 EXPOSE 4000
