@@ -1,7 +1,7 @@
 # Frontend Dockerfile para Render
+# Etapa 1: Build de la aplicación Angular
 FROM node:18-alpine AS builder
 
-# Establecer directorio de trabajo
 WORKDIR /app
 
 # Copiar package.json y package-lock.json
@@ -13,20 +13,23 @@ RUN npm ci
 # Copiar el código fuente
 COPY . .
 
-# Construir la aplicación Angular para producción
+# Build de producción
 RUN npm run build
 
-# Etapa de producción con nginx
-FROM nginx:alpine
+# Etapa 2: Servidor con SSR
+FROM node:18-alpine
 
-# Copiar la configuración de nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+WORKDIR /app
 
-# Copiar los archivos compilados desde la etapa de construcción
-COPY --from=builder /app/dist/tienda-ropa/browser /usr/share/nginx/html
+# Copiar los archivos compilados desde la etapa de build
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package*.json ./
 
-# Exponer el puerto 80
-EXPOSE 80
+# Instalar solo dependencias de producción
+RUN npm ci --only=production
 
-# Comando para iniciar nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Exponer el puerto (Render usa la variable PORT dinámica)
+EXPOSE ${PORT:-4000}
+
+# Comando para iniciar el servidor SSR
+CMD ["npm", "run", "serve:ssr:tienda-ropa"]

@@ -1,9 +1,11 @@
 node_modules
 npm-debug.log
+.angular
+dist
 .git
 .gitignore
 README.md
-dist
-.angular
 *.log
-e2e
+.editorconfig
+karma.conf.js
+tsconfig.spec.json
