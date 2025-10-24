@@ -1,19 +1,19 @@
 <div class="courses-container">
   <h2>Cursos de Crochet</h2>
   <p class="courses-intro">Aprende a tejer con nuestros cursos especializados de crochet. Desde principiantes hasta avanzados.</p>
-  
+
   <div *ngIf="loading" class="loading">
     <p>Cargando cursos...</p>
   </div>
-  
+
   <div *ngIf="error" class="error">
     <p>Ha ocurrido un error al cargar los cursos. Por favor, intenta nuevamente.</p>
   </div>
-  
+
   <div *ngIf="!loading && !error && courses.length === 0" class="no-courses">
     <p>No hay cursos disponibles en este momento.</p>
   </div>
-  
+
   <div *ngIf="!loading && !error && courses.length > 0" class="courses-grid">
     <div *ngFor="let course of courses" class="course-card">
       <div class="course-image">
@@ -24,7 +24,7 @@
         <p class="course-description">{{ course.description }}</p>
         <div class="course-details">
           <span class="course-difficulty">Dificultad: {{ course.difficulty }}</span>
-          <span class="course-price">{{ course.price | currency:'EUR' }}</span>
+          <span class="course-price">{{ course.price | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
         </div>
         <div class="course-actions">
           <button class="btn-details" [routerLink]="['/producto', course._id]">Ver detalles</button>

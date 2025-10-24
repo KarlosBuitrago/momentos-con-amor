@@ -28,10 +28,10 @@ export class CrochetMaterialsComponent implements OnInit {
   loadMaterials(): void {
     this.productService.getProducts().subscribe({
       next: (products) => {
-        // Filtrar productos que son materiales (no son cursos y pertenecen a categoría de materiales)
-        this.materials = products.filter(product => 
-          !product.isCourse && 
-          (product.category === 'materiales' || product.category === 'hilos' || product.category === 'agujas')
+        // Filtrar productos que son materiales (categoría "Materiales" o productType "material")
+        this.materials = products.filter(product =>
+          product.category === 'Materiales' ||
+          product.productType === 'material'
         );
         this.loading = false;
       },

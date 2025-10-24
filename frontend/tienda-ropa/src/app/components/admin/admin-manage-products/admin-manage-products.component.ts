@@ -91,7 +91,10 @@ export class AdminManageProductsComponent implements OnInit {
     this.productService.deleteProduct(product.id).subscribe({
       next: () => {
         this.setStatus('success', 'Producto eliminado correctamente');
-        this.loadProducts();
+
+        // Eliminar del array local sin recargar desde el servidor
+        this.products = this.products.filter(p => p.id !== product.id);
+        this.applyFilters();
       },
       error: (error) => {
         console.error('Error eliminando producto', error);

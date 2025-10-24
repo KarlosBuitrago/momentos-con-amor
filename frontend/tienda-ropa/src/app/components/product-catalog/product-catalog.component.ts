@@ -31,8 +31,13 @@ export class ProductCatalogComponent implements OnInit {
     this.loading = true;
     this.productService.getProducts().subscribe({
       next: (data) => {
-        this.products = data;
-        this.filteredProducts = [...data];
+        // Filtrar solo muñecos (categoría "Muñecos" o productType "doll")
+        const dolls = data.filter(product =>
+          product.category === 'Muñecos' ||
+          product.productType === 'doll'
+        );
+        this.products = dolls;
+        this.filteredProducts = [...dolls];
         this.loading = false;
       },
       error: (err) => {

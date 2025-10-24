@@ -40,13 +40,11 @@ const req = http.request(options, (res) => {
       
       if (res.statusCode === 201) {
         console.log('✅ Usuario administrador creado exitosamente!\n');
-        console.log('Credenciales de acceso:');
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         console.log(`Email:    admin@tiendaropa.com`);
-        console.log(`Password: Admin123!`);
         console.log(`Role:     admin`);
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-        console.log('⚠️  IMPORTANTE: Guarda estas credenciales en un lugar seguro.\n');
+        console.log('⚠️  IMPORTANTE: Revisa el código fuente para la contraseña inicial.\n');
       } else {
         console.log('Respuesta del servidor:', response);
       }

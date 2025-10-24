@@ -16,7 +16,7 @@ import { CartService } from '../../services/cart.service';
       </div>
       <div class="detail-info">
         <h2>{{ product.name }}</h2>
-        <p class="price">{{ product.price | currency:'COP':'symbol':'1.0-0' }}</p>
+        <p class="price">{{ product.price | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
         <p class="category">{{ product.category }} · {{ product.targetAudience }}</p>
         <p class="description">{{ product.description }}</p>
         <p *ngIf="product.materials && product.materials.length">Materiales: {{ product.materials.join(', ') }}</p>
@@ -27,7 +27,7 @@ import { CartService } from '../../services/cart.service';
             <label class="customization-option" *ngFor="let control of customizationArray.controls; let i = index">
               <input type="checkbox" [formControlName]="i">
               <span>{{ product.customizations?.[i]?.label }}</span>
-              <span *ngIf="product.customizations?.[i]?.price" class="price-extra">(+{{ product.customizations?.[i]?.price | currency:'COP':'symbol':'1.0-0' }})</span>
+              <span *ngIf="product.customizations?.[i]?.price" class="price-extra">(+{{ product.customizations?.[i]?.price | currency:'COP':'symbol-narrow':'1.0-0' }})</span>
             </label>
           </fieldset>
           <button type="submit">Añadir al carrito</button>

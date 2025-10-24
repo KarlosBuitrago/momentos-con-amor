@@ -62,6 +62,17 @@ export class ProductService {
     return this.apiUrl;
   }
 
+  /** Limpiar productos del localStorage (útil para eliminar productos fantasma) */
+  clearLocalStorage(): void {
+    try {
+      if (typeof window === 'undefined') return;
+      localStorage.removeItem(this.storageKey);
+      console.log('LocalStorage de productos limpiado');
+    } catch (e) {
+      console.warn('Error limpiando localStorage', e);
+    }
+  }
+
   private writeLocal(products: Product[]): void {
     try {
       if (typeof window === 'undefined') return;
@@ -147,20 +158,9 @@ export class ProductService {
 
     return this.http.get<Product[]>(this.apiUrl, { params }).pipe(
       catchError(err => {
-        // Fallback to local storage, seed some products if empty so UI shows something
-        const local = this.seedIfEmpty();
-        // Apply simple client-side filtering if filters were provided
-        if (filters) {
-          const filtered = local.filter(p => {
-            if (filters.category && p.category !== filters.category) return false;
-            if (filters.targetAudience && p.targetAudience !== filters.targetAudience) return false;
-            if (filters.minPrice != null && p.price < filters.minPrice) return false;
-            if (filters.maxPrice != null && p.price > filters.maxPrice) return false;
-            return true;
-          });
-          return of(filtered);
-        }
-        return of(local);
+        console.error('Error al obtener productos del backend:', err);
+        // Retornar array vacío en lugar de usar localStorage
+        return of([]);
       })
     );
   }
@@ -168,10 +168,8 @@ export class ProductService {
   // Obtener un producto por ID
   getProductById(id: string): Observable<Product> {
     return this.http.get<Product>(`${this.apiUrl}/${id}`).pipe(
-      catchError(() => {
-        const local = this.readLocal();
-        const found = local.find(p => p.id === id);
-        if (found) return of(found);
+      catchError((err) => {
+        console.error('Error al obtener producto del backend:', err);
         return throwError(() => new Error('Producto no encontrado'));
       })
     );
@@ -180,15 +178,9 @@ export class ProductService {
   // Crear un nuevo producto
   createProduct(product: Product): Observable<Product> {
     return this.http.post<Product>(this.apiUrl, product).pipe(
-      catchError(() => {
-        const products = this.readLocal();
-        const newProduct: Product = {
-          ...product,
-          id: product.id ?? ('p-' + Date.now().toString())
-        };
-        products.unshift(newProduct);
-        this.writeLocal(products);
-        return of(newProduct);
+      catchError((err) => {
+        console.error('Error al crear producto en el backend:', err);
+        return throwError(() => new Error('Error al crear el producto'));
       })
     );
   }
@@ -204,14 +196,9 @@ export class ProductService {
   // Actualizar un producto existente
   updateProduct(id: string, product: Partial<Product>): Observable<Product> {
     return this.http.put<Product>(`${this.apiUrl}/${id}`, product).pipe(
-      catchError(() => {
-        const products = this.readLocal();
-        const idx = products.findIndex(p => p.id === id);
-        if (idx === -1) return throwError(() => new Error('Producto no encontrado'));
-        const updated: Product = { ...products[idx], ...product } as Product;
-        products[idx] = updated;
-        this.writeLocal(products);
-        return of(updated);
+      catchError((err) => {
+        console.error('Error al actualizar producto en el backend:', err);
+        return throwError(() => new Error('Error al actualizar el producto'));
       })
     );
   }
@@ -220,11 +207,9 @@ export class ProductService {
   deleteProduct(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`).pipe(
       map(() => ({ success: true })),
-      catchError(() => {
-        const products = this.readLocal();
-        const filtered = products.filter(p => p.id !== id);
-        this.writeLocal(filtered);
-        return of({ success: true });
+      catchError((err) => {
+        console.error('Error al eliminar producto del backend:', err);
+        return throwError(() => new Error('Error al eliminar el producto'));
       })
     );
   }

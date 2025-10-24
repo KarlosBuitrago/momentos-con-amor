@@ -1,15 +1,15 @@
 <div class="checkout-container">
   <h2>Finalizar Compra</h2>
-  
+
   <div *ngIf="success" class="success-message">
     <h3>¡Pedido realizado con éxito!</h3>
     <p>Tu pedido ha sido procesado correctamente. Serás redirigido a tus pedidos en unos segundos...</p>
   </div>
-  
+
   <div *ngIf="!success" class="checkout-content">
     <div class="order-summary">
       <h3>Resumen del Pedido</h3>
-      
+
       <div class="cart-items">
         <div *ngFor="let item of cartItems" class="cart-item">
           <div class="item-image">
@@ -18,15 +18,15 @@
           <div class="item-details">
             <h4>{{ item.product.name }}</h4>
             <p>Cantidad: {{ item.quantity }}</p>
-            <p class="item-price">{{ (item.product.price * item.quantity) | currency:'COP':'symbol':'1.0-0' }}</p>
+            <p class="item-price">{{ (item.product.price * item.quantity) | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
           </div>
         </div>
       </div>
-      
+
       <div class="order-total">
         <div class="total-row">
           <span>Subtotal:</span>
-          <span>{{ totalPrice | currency:'COP':'symbol':'1.0-0' }}</span>
+          <span>{{ totalPrice | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
         </div>
         <div class="total-row">
           <span>Envío:</span>
@@ -34,14 +34,14 @@
         </div>
         <div class="total-row final-total">
           <span>Total:</span>
-          <span>{{ totalPrice | currency:'COP':'symbol':'1.0-0' }}</span>
+          <span>{{ totalPrice | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
         </div>
       </div>
     </div>
-    
+
     <div class="checkout-form">
       <h3>Información de Envío y Pago</h3>
-      
+
       <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
           <label for="fullName">Nombre completo</label>
@@ -50,7 +50,7 @@
             Nombre completo es requerido
           </div>
         </div>
-        
+
         <div class="form-group">
           <label for="email">Correo electrónico</label>
           <input type="email" id="email" formControlName="email" class="form-control">
@@ -58,7 +58,7 @@
             Correo electrónico válido es requerido
           </div>
         </div>
-        
+
         <div class="form-group">
           <label for="phone">Teléfono</label>
           <input type="tel" id="phone" formControlName="phone" class="form-control">
@@ -66,7 +66,7 @@
             Teléfono es requerido
           </div>
         </div>
-        
+
         <div class="form-group">
           <label for="address">Dirección</label>
           <input type="text" id="address" formControlName="address" class="form-control">
@@ -74,7 +74,7 @@
             Dirección es requerida
           </div>
         </div>
-        
+
         <div class="form-row">
           <div class="form-group">
             <label for="city">Ciudad</label>
@@ -83,7 +83,7 @@
               Ciudad es requerida
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="postalCode">Código Postal</label>
             <input type="text" id="postalCode" formControlName="postalCode" class="form-control">
@@ -92,7 +92,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="form-group">
           <label>Método de Pago</label>
           <div class="payment-methods">
@@ -100,18 +100,18 @@
               <input type="radio" id="efectivo" value="efectivo" formControlName="paymentMethod">
               <label for="efectivo">Efectivo contra entrega</label>
             </div>
-            
+
             <div class="payment-method">
               <input type="radio" id="transferencia" value="transferencia" formControlName="paymentMethod">
               <label for="transferencia">Transferencia bancaria</label>
             </div>
           </div>
         </div>
-        
+
         <div *ngIf="error" class="error-alert">
           {{ error }}
         </div>
-        
+
         <div class="form-actions">
           <button type="submit" class="submit-btn" [disabled]="checkoutForm.invalid || loading">
             <span *ngIf="!loading">Confirmar Pedido</span>

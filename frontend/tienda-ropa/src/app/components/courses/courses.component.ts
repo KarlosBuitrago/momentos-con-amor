@@ -28,8 +28,12 @@ export class CoursesComponent implements OnInit {
   loadCourses(): void {
     this.productService.getProducts().subscribe({
       next: (products) => {
-        // Filtrar solo los productos que son cursos
-        this.courses = products.filter(product => product.isCourse === true);
+        // Filtrar solo los productos que son cursos (categoría "Cursos" o isCourse true)
+        this.courses = products.filter(product =>
+          product.category === 'Cursos' ||
+          product.isCourse === true ||
+          product.productType === 'course'
+        );
         this.loading = false;
       },
       error: (err) => {

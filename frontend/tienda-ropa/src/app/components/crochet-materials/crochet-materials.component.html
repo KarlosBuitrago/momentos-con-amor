@@ -1,19 +1,19 @@
 <div class="materials-container">
   <h2>Materiales de Crochet</h2>
   <p class="materials-intro">Encuentra todos los materiales que necesitas para tus proyectos de crochet.</p>
-  
+
   <div *ngIf="loading" class="loading">
     <p>Cargando materiales...</p>
   </div>
-  
+
   <div *ngIf="error" class="error">
     <p>Ha ocurrido un error al cargar los materiales. Por favor, intenta nuevamente.</p>
   </div>
-  
+
   <div *ngIf="!loading && !error && materials.length === 0" class="no-materials">
     <p>No hay materiales disponibles en este momento.</p>
   </div>
-  
+
   <div *ngIf="!loading && !error && materials.length > 0" class="materials-grid">
     <div *ngFor="let material of materials" class="material-card">
       <div class="material-image">
@@ -24,7 +24,7 @@
         <p class="material-description">{{ material.description }}</p>
         <div class="material-details">
           <span class="material-category">{{ material.category }}</span>
-          <span class="material-price">{{ material.price | currency:'EUR' }}</span>
+          <span class="material-price">{{ material.price | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
         </div>
         <div class="material-actions">
           <button class="btn-details" [routerLink]="['/producto', material._id]">Ver detalles</button>

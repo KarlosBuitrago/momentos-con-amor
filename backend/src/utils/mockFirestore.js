@@ -167,6 +167,7 @@ function createMockFirestore(options = {}) {
 
 function createMockAuth() {
   return {
+    _isMock: true,
     async createUser(data = {}) {
       return { uid: randomUUID(), ...data };
     },
@@ -183,6 +184,15 @@ function createMockAuth() {
     async createCustomToken(uid, claims = {}) {
       // Return a mock token
       return Buffer.from(JSON.stringify({ uid, ...claims })).toString('base64');
+    },
+    async verifyIdToken(token) {
+      // Mock verification - decode the token
+      try {
+        const decoded = JSON.parse(Buffer.from(token, 'base64').toString('utf-8'));
+        return { uid: decoded.uid || 'mock-user-id', ...decoded };
+      } catch (error) {
+        throw new Error('Token inválido');
+      }
     }
   };
 }

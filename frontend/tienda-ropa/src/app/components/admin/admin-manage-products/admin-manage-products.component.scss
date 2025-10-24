@@ -35,13 +35,53 @@
 
 .filters-section {
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
   margin-bottom: 2rem;
-  flex-wrap: wrap;
+  align-items: flex-end;
+
+  .category-filter {
+    flex-shrink: 0;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-right: 1rem;
+
+    label {
+      font-weight: 500;
+      color: #555;
+      font-size: 0.9rem;
+    }
+
+    .category-select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      background-color: white;
+
+      &:focus {
+        outline: none;
+        border-color: #ff69b4;
+      }
+    }
+  }
 
   .search-box {
     flex: 1;
-    min-width: 250px;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-left: 1rem;
+
+    label {
+      font-weight: 500;
+      color: #555;
+      font-size: 0.9rem;
+    }
   }
 
   .search-input {
@@ -55,29 +95,32 @@
       outline: none;
       border-color: #ff69b4;
     }
+
+    &::placeholder {
+      color: #999;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .manage-products-container {
+    padding: 1rem;
   }
 
-  .category-filter {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  .filters-section {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
 
-    label {
-      font-weight: 500;
-      color: #555;
+    .category-filter {
+      width: 100%;
+      margin-right: 0;
     }
 
-    .category-select {
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-
-      &:focus {
-        outline: none;
-        border-color: #ff69b4;
-      }
+    .search-box {
+      max-width: 100%;
+      margin-left: 0;
     }
   }
 }
@@ -229,20 +272,122 @@
   }
 }
 
+// Responsive para tablets
+@media (max-width: 992px) {
+  .product-card {
+    .product-info {
+      h3 {
+        font-size: 1.25rem;
+      }
+
+      .product-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+    }
+  }
+}
+
+// Responsive para móviles
 @media (max-width: 768px) {
+  .header {
+    h2 {
+      font-size: 1.5rem;
+    }
+  }
+
   .product-card {
     flex-direction: column;
+    padding: 1rem;
 
     .product-image {
       width: 100%;
       height: 200px;
     }
 
+    .product-info {
+      h3 {
+        font-size: 1.25rem;
+      }
+
+      .product-description {
+        font-size: 0.9rem;
+      }
+
+      .product-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+
+        .product-price {
+          font-size: 1.1rem;
+        }
+      }
+    }
+
     .product-actions {
       flex-direction: row;
+      width: 100%;
 
       button {
         flex: 1;
+        padding: 0.65rem 1rem;
+        font-size: 0.95rem;
+      }
+    }
+  }
+}
+
+// Responsive para móviles pequeños
+@media (max-width: 480px) {
+  .manage-products-container {
+    padding: 0.75rem;
+  }
+
+  .header {
+    margin-bottom: 1.5rem;
+
+    h2 {
+      font-size: 1.25rem;
+    }
+  }
+
+  .filters-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .search-input,
+  .category-select {
+    padding: 0.65rem;
+    font-size: 0.95rem;
+  }
+
+  .product-card {
+    gap: 1rem;
+
+    .product-image {
+      height: 180px;
+    }
+
+    .product-info {
+      h3 {
+        font-size: 1.1rem;
+      }
+
+      .product-category,
+      .product-stock,
+      .product-status {
+        font-size: 0.8rem;
+      }
+    }
+
+    .product-actions {
+      gap: 0.5rem;
+
+      button {
+        padding: 0.6rem 0.75rem;
+        font-size: 0.9rem;
       }
     }
   }
