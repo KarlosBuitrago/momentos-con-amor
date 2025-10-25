@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/api',
+  apiUrl: (typeof window !== 'undefined' && (window as any)['env']?.['API_URL']) || 'http://localhost:3000/api',
   firebase: {
     apiKey: 'AIzaSyB0QCE8C_WxckurgUwe9bo8Cp5yb7WUinc',
     authDomain: 'react-firebase-dbc76.firebaseapp.com',

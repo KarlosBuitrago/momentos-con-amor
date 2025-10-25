@@ -1,7 +1,6 @@
 export const environment = {
   production: true,
-  // IMPORTANTE: Actualiza esta URL después de desplegar el backend en Render
-  apiUrl: 'https://tienda-ropa-backend.onrender.com/api',
+  apiUrl: (typeof window !== 'undefined' && (window as any)['env']?.['API_URL']) || 'https://momentos-con-amor.onrender.com/api',
   firebase: {
     apiKey: 'AIzaSyB0QCE8C_WxckurgUwe9bo8Cp5yb7WUinc',
     authDomain: 'react-firebase-dbc76.firebaseapp.com',

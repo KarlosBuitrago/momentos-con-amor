@@ -4,7 +4,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && npm run generate-env",
+    "build:prod": "ng build --configuration production && npm run generate-env",
+    "generate-env": "bash generate-env.sh || node generate-env.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:tienda-ropa": "node dist/tienda-ropa/server/server.mjs"
