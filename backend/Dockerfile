@@ -1,6 +1,9 @@
 # Backend Dockerfile para Render
 FROM node:18-alpine
 
+# Instalar dependencias necesarias para bcrypt
+RUN apk add --no-cache python3 make g++
+
 # Establecer directorio de trabajo
 WORKDIR /app
 
