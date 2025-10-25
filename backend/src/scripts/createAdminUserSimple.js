@@ -1,10 +1,12 @@
 const { db } = require('../config/firebase');
+const bcrypt = require('bcrypt');
 
 async function createAdminUserSimple() {
   try {
     console.log('Creando usuario administrador en Firestore...');
     
     const adminEmail = 'admin@tiendaropa.com';
+    const adminPassword = 'Admin123!';
     const adminId = 'admin-001'; // ID fijo para el admin
     
     const usersCollection = db.collection('users');
@@ -17,10 +19,14 @@ async function createAdminUserSimple() {
       return;
     }
     
+    // Hashear contraseña
+    const passwordHash = await bcrypt.hash(adminPassword, 10);
+    
     // Crear usuario directamente en Firestore
     const userData = {
       uid: adminId,
       email: adminEmail,
+      passwordHash,
       firstName: 'Admin',
       lastName: 'Sistema',
       role: 'admin',
@@ -33,8 +39,8 @@ async function createAdminUserSimple() {
     
     console.log('\n✅ Usuario administrador creado exitosamente');
     console.log('📧 Email:', adminEmail);
-    console.log('\n⚠️ NOTA: Este usuario solo existe en Firestore.');
-    console.log('   Para usar Firebase Auth completo, habilita Authentication en Firebase Console.');
+    console.log('🔑 Contraseña: Admin123!');
+    console.log('\n⚠️ IMPORTANTE: Cambia esta contraseña después del primer inicio de sesión.');
     
   } catch (error) {
     console.error('❌ Error al crear usuario administrador:', error);

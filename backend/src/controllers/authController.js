@@ -1,5 +1,6 @@
-const { auth } = require('../config/firebase');
+const { auth, db } = require('../config/firebase');
 const User = require('../models/User');
+const bcrypt = require('bcrypt');
 
 // Registro de usuario
 exports.register = async (req, res) => {
@@ -11,24 +12,38 @@ exports.register = async (req, res) => {
       return res.status(400).json({ error: 'Todos los campos son obligatorios' });
     }
     
-    // Crear usuario
+    // Verificar si el usuario ya existe
+    const usersCollection = db.collection('users');
+    const existingUser = await usersCollection.where('email', '==', email).limit(1).get();
+    
+    if (!existingUser.empty) {
+      return res.status(400).json({ error: 'El email ya está registrado' });
+    }
+    
+    // Hashear contraseña
+    const passwordHash = await bcrypt.hash(password, 10);
+    
+    // Crear usuario en Firestore
     const userData = {
       email,
-      password,
+      passwordHash,
       firstName,
       lastName,
-      role: role || 'customer'
+      role: role || 'customer',
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
     
-    const newUser = await User.create(userData);
+    const docRef = await usersCollection.add(userData);
+    
     res.status(201).json({
       message: 'Usuario registrado correctamente',
       user: {
-        id: newUser.id,
-        email: newUser.email,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        role: newUser.role
+        id: docRef.id,
+        email: userData.email,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        role: userData.role
       }
     });
   } catch (error) {
@@ -47,10 +62,29 @@ exports.login = async (req, res) => {
       return res.status(400).json({ error: 'Email y contraseña son obligatorios' });
     }
     
-    // Buscar usuario por email en Firestore
-    const user = await User.getByEmail(email);
+    // Buscar usuario por email en Firestore (necesitamos el documento completo con password)
+    const usersCollection = db.collection('users');
+    const snapshot = await usersCollection.where('email', '==', email).limit(1).get();
     
-    if (!user) {
+    if (snapshot.empty) {
+      return res.status(401).json({ error: 'Credenciales inválidas' });
+    }
+    
+    const userDoc = snapshot.docs[0];
+    const userData = userDoc.data();
+    const user = {
+      id: userDoc.id,
+      ...userData
+    };
+    
+    // Validar contraseña
+    if (!userData.passwordHash) {
+      return res.status(401).json({ error: 'Credenciales inválidas' });
+    }
+    
+    const isValidPassword = await bcrypt.compare(password, userData.passwordHash);
+    
+    if (!isValidPassword) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
     

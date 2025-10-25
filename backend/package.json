@@ -9,7 +9,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "create-admin": "node src/scripts/createAdminUser.js",
     "create-admin-simple": "node src/scripts/createAdminUserSimple.js",
-    "check-user": "node src/scripts/checkUser.js"
+    "check-user": "node src/scripts/checkUser.js",
+    "generate-firebase-env": "node scripts/generate-firebase-env.js",
+    "update-admin-password": "node src/scripts/updateAdminPassword.js"
   },
   "keywords": [
     "tienda",
@@ -21,11 +23,12 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "firebase-admin": "^11.11.0"
+    "firebase-admin": "^13.5.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
