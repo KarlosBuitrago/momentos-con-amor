@@ -1,36 +1,41 @@
-<div class="courses-container">
-  <h2>Cursos de Crochet</h2>
-  <p class="courses-intro">Aprende a tejer con nuestros cursos especializados de crochet. Desde principiantes hasta avanzados.</p>
+<section class="hero">
+  <div class="hero-content">
+    <h2>Cursos de Crochet</h2>
+    <p>Aprende a tejer con nuestros cursos especializados de crochet. Desde principiantes hasta avanzados.</p>
+  </div>
+</section>
 
-  <div *ngIf="loading" class="loading">
-    <p>Cargando cursos...</p>
+<div class="products-grid">
+  <div *ngIf="loading" class="loading-spinner">
+    <span>Cargando cursos...</span>
   </div>
 
-  <div *ngIf="error" class="error">
-    <p>Ha ocurrido un error al cargar los cursos. Por favor, intenta nuevamente.</p>
+  <div *ngIf="error" class="error-message">
+    {{ error }}
   </div>
 
-  <div *ngIf="!loading && !error && courses.length === 0" class="no-courses">
-    <p>No hay cursos disponibles en este momento.</p>
+  <div *ngIf="!loading && !error && courses.length === 0" class="no-products">
+    No hay cursos disponibles en este momento.
   </div>
 
-  <div *ngIf="!loading && !error && courses.length > 0" class="courses-grid">
-    <div *ngFor="let course of courses" class="course-card">
-      <div class="course-image">
-        <img [src]="course.imageUrl || 'assets/images/default-course.svg'" [alt]="course.name">
+  <div *ngFor="let course of courses" class="product-card"
+    [class.product-card--disabled]="course.isAvailable === false">
+    <div class="product-image">
+      <img [src]="course.imageUrl || 'assets/images/default-course.svg'" [alt]="course.name">
+    </div>
+    <div class="product-info">
+      <h3 class="product-name">{{ course.name }}</h3>
+      <p class="product-category">{{ course.category }}</p>
+      <p class="product-price">{{ course.price | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
+      <p class="product-description">{{ course.description | slice:0:140 }}{{ course.description.length > 140 ? '...' : '' }}</p>
+      <div class="product-meta" *ngIf="course.difficulty">
+        <span>Dificultad: {{ course.difficulty }}</span>
       </div>
-      <div class="course-info">
-        <h3>{{ course.name }}</h3>
-        <p class="course-description">{{ course.description }}</p>
-        <div class="course-details">
-          <span class="course-difficulty">Dificultad: {{ course.difficulty }}</span>
-          <span class="course-price">{{ course.price | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
-        </div>
-        <div class="course-actions">
-          <button class="btn-details" [routerLink]="['/producto', course._id]">Ver detalles</button>
-          <button class="btn-add-cart" (click)="addToCart(course)">Añadir al carrito</button>
-        </div>
+      <div class="product-actions">
+        <button class="view-details-button" [routerLink]="['/productos', course.id]">Ver detalles</button>
+        <button class="add-to-cart-button" (click)="addToCart(course)">Añadir al carrito</button>
       </div>
+      <p class="availability" *ngIf="course.isAvailable === false">Temporalmente agotado</p>
     </div>
   </div>
 </div>
