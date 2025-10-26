@@ -11,7 +11,9 @@
     "create-admin-simple": "node src/scripts/createAdminUserSimple.js",
     "check-user": "node src/scripts/checkUser.js",
     "generate-firebase-env": "node scripts/generate-firebase-env.js",
-    "update-admin-password": "node src/scripts/updateAdminPassword.js"
+    "update-admin-password": "node src/scripts/updateAdminPassword.js",
+    "seed-data": "node src/scripts/seedCustomizationsMaterialsTags.js",
+    "seed-products": "node src/scripts/seedProducts.js"
   },
   "keywords": [
     "tienda",
@@ -28,7 +30,10 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "firebase-admin": "^13.5.0"
+    "firebase-admin": "^13.5.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^7.0.10",
+    "pdfkit": "^0.15.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

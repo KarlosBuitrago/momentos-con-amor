@@ -1,0 +1,238 @@
+<div class="checkout-container">
+  <h2>Finalizar Compra</h2>
+
+  <!-- Indicador de pasos -->
+  <div class="steps-indicator">
+    <div class="step" [class.active]="currentStep === 'form'" [class.completed]="currentStep !== 'form'">
+      <div class="step-number">1</div>
+      <div class="step-label">Información</div>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step" [class.active]="currentStep === 'invoice'" [class.completed]="currentStep === 'confirmed'">
+      <div class="step-number">2</div>
+      <div class="step-label">Factura</div>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step" [class.active]="currentStep === 'confirmed'">
+      <div class="step-number">3</div>
+      <div class="step-label">Confirmación</div>
+    </div>
+  </div>
+
+  <!-- Mensajes de error -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- PASO 1: Formulario de información -->
+  <div *ngIf="currentStep === 'form'" class="checkout-content">
+    <div class="order-summary">
+      <h3>Resumen del Pedido</h3>
+
+      <div class="cart-items">
+        <div *ngFor="let item of cartItems" class="cart-item">
+          <div class="item-image">
+            <img [src]="item.product.imageUrl || 'assets/images/placeholder.jpg'" [alt]="item.product.name">
+          </div>
+          <div class="item-details">
+            <h4>{{ item.product.name }}</h4>
+            <p>Cantidad: {{ item.quantity }}</p>
+            <p class="item-price">{{ (item.product.price * item.quantity) | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-total">
+        <div class="total-row">
+          <span>Subtotal:</span>
+          <span>{{ totalPrice | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+        <div class="total-row">
+          <span>Envío:</span>
+          <span>Gratis</span>
+        </div>
+        <div class="total-row final-total">
+          <span>Total:</span>
+          <span>{{ totalPrice | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkout-form">
+      <h3>Información de Envío y Pago</h3>
+
+      <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="fullName">Nombre completo *</label>
+          <input type="text" id="fullName" formControlName="fullName" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" id="email" formControlName="email" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Teléfono *</label>
+          <input type="tel" id="phone" formControlName="phone" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="address">Dirección *</label>
+          <input type="text" id="address" formControlName="address" class="form-control">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="city">Ciudad *</label>
+            <input type="text" id="city" formControlName="city" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="postalCode">Código Postal *</label>
+            <input type="text" id="postalCode" formControlName="postalCode" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="paymentMethod">Método de Pago *</label>
+          <select id="paymentMethod" formControlName="paymentMethod" class="form-control">
+            <option value="efectivo">Efectivo</option>
+            <option value="transferencia">Transferencia Bancaria</option>
+            <option value="nequi">Nequi</option>
+            <option value="daviplata">Daviplata</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-submit" [disabled]="loading || checkoutForm.invalid">
+          <span *ngIf="!loading">Generar Factura</span>
+          <span *ngIf="loading">Generando...</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- PASO 2: Factura generada -->
+  <div *ngIf="currentStep === 'invoice' && generatedInvoice" class="invoice-container">
+    <div class="invoice">
+      <div class="invoice-header">
+        <div class="company-info">
+          <h2>Momentos con Amor</h2>
+          <p>Tienda de Muñecos Artesanales</p>
+          <p>NIT: 123456789-0</p>
+        </div>
+        <div class="invoice-info">
+          <h3>FACTURA</h3>
+          <p><strong>No:</strong> {{ generatedInvoice.invoiceNumber }}</p>
+          <p><strong>Fecha:</strong> {{ generatedInvoice.date | date:'dd/MM/yyyy' }}</p>
+          <p><strong>Estado:</strong>
+            <span class="status-badge" [class.pending]="generatedInvoice.paymentStatus === 'pending'">
+              {{ generatedInvoice.paymentStatus === 'pending' ? 'Pendiente' : 'Pagado' }}
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <div class="invoice-customer">
+        <h4>Facturar a:</h4>
+        <p><strong>{{ generatedInvoice.customer.name }}</strong></p>
+        <p>{{ generatedInvoice.customer.email }}</p>
+        <p>{{ generatedInvoice.customer.phone }}</p>
+        <p>{{ generatedInvoice.customer.address }}</p>
+        <p>{{ generatedInvoice.customer.city }}, {{ generatedInvoice.customer.postalCode }}</p>
+      </div>
+
+      <div class="invoice-items">
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio Unit.</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of generatedInvoice.items">
+              <td>
+                <strong>{{ item.name }}</strong>
+                <div *ngIf="item.customizations && item.customizations.length > 0" class="customizations">
+                  <small *ngFor="let custom of item.customizations">
+                    + {{ custom.name }} ({{ formatCurrency(custom.price) }})
+                  </small>
+                </div>
+              </td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ formatCurrency(item.unitPrice) }}</td>
+              <td>{{ formatCurrency(item.subtotal) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="invoice-totals">
+        <div class="total-row">
+          <span>Subtotal:</span>
+          <span>{{ formatCurrency(generatedInvoice.subtotal) }}</span>
+        </div>
+        <div class="total-row" *ngIf="generatedInvoice.tax > 0">
+          <span>IVA ({{ generatedInvoice.taxPercentage }}%):</span>
+          <span>{{ formatCurrency(generatedInvoice.tax) }}</span>
+        </div>
+        <div class="total-row" *ngIf="generatedInvoice.shipping > 0">
+          <span>Envío:</span>
+          <span>{{ formatCurrency(generatedInvoice.shipping) }}</span>
+        </div>
+        <div class="total-row" *ngIf="generatedInvoice.discount > 0">
+          <span>Descuento:</span>
+          <span>-{{ formatCurrency(generatedInvoice.discount) }}</span>
+        </div>
+        <div class="total-row final-total">
+          <span><strong>Total:</strong></span>
+          <span><strong>{{ formatCurrency(generatedInvoice.total) }}</strong></span>
+        </div>
+      </div>
+
+      <div class="invoice-payment">
+        <p><strong>Método de Pago:</strong> {{ generatedInvoice.paymentMethod }}</p>
+      </div>
+
+      <div class="invoice-notes" *ngIf="generatedInvoice.notes">
+        <h4>Notas:</h4>
+        <p>{{ generatedInvoice.notes }}</p>
+      </div>
+    </div>
+
+    <div class="invoice-actions">
+      <button class="btn-download" (click)="downloadInvoice()">
+        📄 Descargar PDF
+      </button>
+      <button class="btn-cancel" (click)="cancelInvoice()">
+        ❌ Cancelar
+      </button>
+      <button class="btn-confirm" (click)="confirmPayment()" [disabled]="confirmingPayment">
+        <span *ngIf="!confirmingPayment">✓ Confirmar Pago</span>
+        <span *ngIf="confirmingPayment">Confirmando...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- PASO 3: Confirmación exitosa -->
+  <div *ngIf="currentStep === 'confirmed'" class="success-container">
+    <div class="success-icon">✓</div>
+    <h3>¡Pago Confirmado!</h3>
+    <p>Tu pedido ha sido procesado correctamente.</p>
+    <p>Número de factura: <strong>{{ generatedInvoice?.invoiceNumber }}</strong></p>
+    <p>Recibirás un email de confirmación en breve.</p>
+    <p class="redirect-message">Serás redirigido a tus pedidos en unos segundos...</p>
+
+    <div class="success-actions">
+      <button class="btn-download" (click)="downloadInvoice()">
+        📄 Descargar Factura
+      </button>
+      <button class="btn-primary" [routerLink]="['/perfil/pedidos']">
+        Ver Mis Pedidos
+      </button>
+    </div>
+  </div>
+</div>

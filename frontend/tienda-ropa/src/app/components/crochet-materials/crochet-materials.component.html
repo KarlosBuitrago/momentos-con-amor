@@ -29,10 +29,18 @@
       <p class="product-price">{{ material.price | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
       <p class="product-description">{{ material.description | slice:0:140 }}{{ material.description.length > 140 ? '...' : '' }}</p>
       <div class="product-actions">
-        <button class="view-details-button" [routerLink]="['/productos', material.id]">Ver detalles</button>
+        <button class="view-details-button" (click)="openDetailModal(material)">Ver detalles</button>
         <button class="add-to-cart-button" (click)="addToCart(material)">Añadir al carrito</button>
       </div>
       <p class="availability" *ngIf="material.isAvailable === false">Temporalmente agotado</p>
     </div>
   </div>
 </div>
+
+<!-- Modal de detalle del producto -->
+<app-product-detail-modal
+  [product]="selectedProduct"
+  [isOpen]="isDetailModalOpen"
+  (close)="closeDetailModal()"
+  (addToCart)="onAddToCart($event)">
+</app-product-detail-modal>

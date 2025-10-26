@@ -23,7 +23,7 @@
           </select>
         </div>
 
-        <div class="field" [class.invalid]="isInvalid('targetAudience')">
+        <div class="field" *ngIf="isDoll" [class.invalid]="isInvalid('targetAudience')">
           <label for="targetAudience">Público objetivo *</label>
           <select id="targetAudience" formControlName="targetAudience">
             <option *ngFor="let audience of targetAudienceOptions" [value]="audience">{{ audience }}</option>
@@ -80,7 +80,7 @@
     </section>
 
     <!-- MATERIALES -->
-    <section class="form-card">
+    <section class="form-card" *ngIf="isDoll">
       <h3>Materiales *</h3>
       <p class="helper-text">Describe con qué materiales está elaborado el producto.</p>
       <div formArrayName="madeWith" class="array-wrapper">
@@ -90,6 +90,13 @@
         </div>
       </div>
       <button type="button" class="btn-secondary" (click)="addMadeWithField()">Agregar material</button>
+
+      <h4 style="margin-top: 20px;">Selector Inteligente de Materiales</h4>
+      <p class="helper-text">Selecciona materiales del catálogo existente para reutilizarlos.</p>
+      <app-material-selector
+        [selectedMaterialIds]="selectedMaterialIds"
+        (materialsChanged)="onMaterialsChanged($event)">
+      </app-material-selector>
     </section>
 
     <!-- PERSONALIZACIONES -->
@@ -126,6 +133,14 @@
         </div>
       </div>
       <button type="button" class="btn-secondary" (click)="addCustomizationField()">Agregar personalización</button>
+
+      <h4 style="margin-top: 20px;">Selector Inteligente de Personalizaciones</h4>
+      <p class="helper-text">Selecciona personalizaciones del catálogo existente para reutilizarlas.</p>
+      <app-customization-selector
+        [selectedCustomizationIds]="selectedCustomizationIds"
+        [productType]="'doll'"
+        (customizationsChanged)="onCustomizationsChanged($event)">
+      </app-customization-selector>
     </section>
 
     <!-- KIT -->
@@ -162,6 +177,13 @@
         </div>
       </div>
       <button type="button" class="btn-secondary" (click)="addTagField()">Agregar etiqueta</button>
+
+      <h4 style="margin-top: 20px;">Selector Inteligente de Tags</h4>
+      <p class="helper-text">Selecciona tags del catálogo existente para organizar mejor tus productos.</p>
+      <app-tag-selector
+        [selectedTagIds]="selectedTagIds"
+        (tagsChanged)="onTagsChanged($event)">
+      </app-tag-selector>
     </section>
 
     <!-- INVENTARIO Y PRODUCCIÓN -->

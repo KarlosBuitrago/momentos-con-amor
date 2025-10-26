@@ -15,7 +15,6 @@ import { CurrencyPipe } from '@angular/common';
 export class ShoppingCartComponent implements OnInit {
   cartItems: CartItem[] = [];
   totalPrice: number = 0;
-  isAuthenticated: boolean = false;
 
   constructor(
     private cartService: CartService,
@@ -31,9 +30,6 @@ export class ShoppingCartComponent implements OnInit {
     this.cartService.getTotalPrice().subscribe(total => {
       this.totalPrice = total;
     });
-
-    // Verificar si el usuario está autenticado
-    this.isAuthenticated = this.authService.isAuthenticated();
   }
 
   updateQuantity(productId: string | undefined, quantity: number): void {
@@ -53,13 +49,8 @@ export class ShoppingCartComponent implements OnInit {
   }
 
   checkout(): void {
-    if (this.isAuthenticated) {
-      this.router.navigate(['/checkout']);
-    } else {
-      this.router.navigate(['/login'], {
-        queryParams: { returnUrl: '/checkout' }
-      });
-    }
+    // Permitir checkout sin autenticación (compra como invitado)
+    this.router.navigate(['/checkout']);
   }
 
   continueShopping(): void {

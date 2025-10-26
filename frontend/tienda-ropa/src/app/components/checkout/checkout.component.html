@@ -1,12 +1,31 @@
 <div class="checkout-container">
   <h2>Finalizar Compra</h2>
 
-  <div *ngIf="success" class="success-message">
-    <h3>¡Pedido realizado con éxito!</h3>
-    <p>Tu pedido ha sido procesado correctamente. Serás redirigido a tus pedidos en unos segundos...</p>
+  <!-- Indicador de pasos -->
+  <div class="steps-indicator">
+    <div class="step" [class.active]="currentStep === 'form'" [class.completed]="currentStep !== 'form'">
+      <div class="step-number">1</div>
+      <div class="step-label">Información</div>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step" [class.active]="currentStep === 'invoice'" [class.completed]="currentStep === 'confirmed'">
+      <div class="step-number">2</div>
+      <div class="step-label">Factura</div>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step" [class.active]="currentStep === 'confirmed'">
+      <div class="step-number">3</div>
+      <div class="step-label">Confirmación</div>
+    </div>
   </div>
 
-  <div *ngIf="!success" class="checkout-content">
+  <!-- Mensajes de error -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- PASO 1: Formulario de información -->
+  <div *ngIf="currentStep === 'form'" class="checkout-content">
     <div class="order-summary">
       <h3>Resumen del Pedido</h3>
 
@@ -44,82 +63,176 @@
 
       <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label for="fullName">Nombre completo</label>
+          <label for="fullName">Nombre completo *</label>
           <input type="text" id="fullName" formControlName="fullName" class="form-control">
-          <div *ngIf="checkoutForm.get('fullName')?.invalid && checkoutForm.get('fullName')?.touched" class="error-message">
-            Nombre completo es requerido
-          </div>
         </div>
 
         <div class="form-group">
-          <label for="email">Correo electrónico</label>
+          <label for="email">Email *</label>
           <input type="email" id="email" formControlName="email" class="form-control">
-          <div *ngIf="checkoutForm.get('email')?.invalid && checkoutForm.get('email')?.touched" class="error-message">
-            Correo electrónico válido es requerido
-          </div>
         </div>
 
         <div class="form-group">
-          <label for="phone">Teléfono</label>
+          <label for="phone">Teléfono *</label>
           <input type="tel" id="phone" formControlName="phone" class="form-control">
-          <div *ngIf="checkoutForm.get('phone')?.invalid && checkoutForm.get('phone')?.touched" class="error-message">
-            Teléfono es requerido
-          </div>
         </div>
 
         <div class="form-group">
-          <label for="address">Dirección</label>
+          <label for="address">Dirección *</label>
           <input type="text" id="address" formControlName="address" class="form-control">
-          <div *ngIf="checkoutForm.get('address')?.invalid && checkoutForm.get('address')?.touched" class="error-message">
-            Dirección es requerida
-          </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="city">Ciudad</label>
+            <label for="city">Ciudad *</label>
             <input type="text" id="city" formControlName="city" class="form-control">
-            <div *ngIf="checkoutForm.get('city')?.invalid && checkoutForm.get('city')?.touched" class="error-message">
-              Ciudad es requerida
-            </div>
           </div>
 
           <div class="form-group">
-            <label for="postalCode">Código Postal</label>
+            <label for="postalCode">Código Postal *</label>
             <input type="text" id="postalCode" formControlName="postalCode" class="form-control">
-            <div *ngIf="checkoutForm.get('postalCode')?.invalid && checkoutForm.get('postalCode')?.touched" class="error-message">
-              Código postal es requerido
-            </div>
           </div>
         </div>
 
         <div class="form-group">
-          <label>Método de Pago</label>
-          <div class="payment-methods">
-            <div class="payment-method">
-              <input type="radio" id="efectivo" value="efectivo" formControlName="paymentMethod">
-              <label for="efectivo">Efectivo contra entrega</label>
-            </div>
-
-            <div class="payment-method">
-              <input type="radio" id="transferencia" value="transferencia" formControlName="paymentMethod">
-              <label for="transferencia">Transferencia bancaria</label>
-            </div>
-          </div>
+          <label for="paymentMethod">Método de Pago *</label>
+          <select id="paymentMethod" formControlName="paymentMethod" class="form-control">
+            <option value="efectivo">Efectivo</option>
+            <option value="transferencia">Transferencia Bancaria</option>
+            <option value="nequi">Nequi</option>
+            <option value="daviplata">Daviplata</option>
+          </select>
         </div>
 
-        <div *ngIf="error" class="error-alert">
-          {{ error }}
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="submit-btn" [disabled]="checkoutForm.invalid || loading">
-            <span *ngIf="!loading">Confirmar Pedido</span>
-            <span *ngIf="loading">Procesando...</span>
-          </button>
-          <button type="button" class="back-btn" routerLink="/carrito">Volver al Carrito</button>
-        </div>
+        <button type="submit" class="btn-submit" [disabled]="loading || checkoutForm.invalid">
+          <span *ngIf="!loading">Generar Factura</span>
+          <span *ngIf="loading">Generando...</span>
+        </button>
       </form>
+    </div>
+  </div>
+
+  <!-- PASO 2: Factura generada -->
+  <div *ngIf="currentStep === 'invoice' && generatedInvoice" class="invoice-container">
+    <div class="invoice">
+      <div class="invoice-header">
+        <div class="company-info">
+          <h2>Momentos con Amor</h2>
+          <p>Tienda de Muñecos Artesanales</p>
+          <p>NIT: 123456789-0</p>
+        </div>
+        <div class="invoice-info">
+          <h3>FACTURA</h3>
+          <p><strong>No:</strong> {{ generatedInvoice.invoiceNumber }}</p>
+          <p><strong>Fecha:</strong> {{ formatDate(generatedInvoice.date) }}</p>
+          <p><strong>Estado:</strong>
+            <span class="status-badge" [class.pending]="generatedInvoice.paymentStatus === 'pending'">
+              {{ generatedInvoice.paymentStatus === 'pending' ? 'Pendiente' : 'Pagado' }}
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <div class="invoice-customer">
+        <h4>Facturar a:</h4>
+        <p><strong>{{ generatedInvoice.customer.name }}</strong></p>
+        <p>{{ generatedInvoice.customer.email }}</p>
+        <p>{{ generatedInvoice.customer.phone }}</p>
+        <p>{{ generatedInvoice.customer.address }}</p>
+        <p>{{ generatedInvoice.customer.city }}, {{ generatedInvoice.customer.postalCode }}</p>
+      </div>
+
+      <div class="invoice-items">
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio Unit.</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of generatedInvoice.items">
+              <td>
+                <strong>{{ item.name }}</strong>
+                <div *ngIf="item.customizations && item.customizations.length > 0" class="customizations">
+                  <small *ngFor="let custom of item.customizations">
+                    + {{ custom.name }} ({{ formatCurrency(custom.price) }})
+                  </small>
+                </div>
+              </td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ formatCurrency(item.unitPrice) }}</td>
+              <td>{{ formatCurrency(item.subtotal) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="invoice-totals">
+        <div class="total-row">
+          <span>Subtotal:</span>
+          <span>{{ formatCurrency(generatedInvoice.subtotal) }}</span>
+        </div>
+        <div class="total-row" *ngIf="generatedInvoice.tax > 0">
+          <span>IVA ({{ generatedInvoice.taxPercentage }}%):</span>
+          <span>{{ formatCurrency(generatedInvoice.tax) }}</span>
+        </div>
+        <div class="total-row" *ngIf="generatedInvoice.shipping > 0">
+          <span>Envío:</span>
+          <span>{{ formatCurrency(generatedInvoice.shipping) }}</span>
+        </div>
+        <div class="total-row" *ngIf="generatedInvoice.discount > 0">
+          <span>Descuento:</span>
+          <span>-{{ formatCurrency(generatedInvoice.discount) }}</span>
+        </div>
+        <div class="total-row final-total">
+          <span><strong>Total:</strong></span>
+          <span><strong>{{ formatCurrency(generatedInvoice.total) }}</strong></span>
+        </div>
+      </div>
+
+      <div class="invoice-payment">
+        <p><strong>Método de Pago:</strong> {{ generatedInvoice.paymentMethod }}</p>
+      </div>
+
+      <div class="invoice-notes" *ngIf="generatedInvoice.notes">
+        <h4>Notas:</h4>
+        <p>{{ generatedInvoice.notes }}</p>
+      </div>
+    </div>
+
+    <div class="invoice-actions">
+      <button class="btn-download" (click)="downloadInvoice()">
+        📄 Descargar PDF
+      </button>
+      <button class="btn-cancel" (click)="cancelInvoice()">
+        ❌ Cancelar
+      </button>
+      <button class="btn-confirm" (click)="confirmPayment()" [disabled]="confirmingPayment">
+        <span *ngIf="!confirmingPayment">✓ Confirmar Pago</span>
+        <span *ngIf="confirmingPayment">Confirmando...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- PASO 3: Confirmación exitosa -->
+  <div *ngIf="currentStep === 'confirmed'" class="success-container">
+    <div class="success-icon">✓</div>
+    <h3>¡Pago Confirmado!</h3>
+    <p>Tu pedido ha sido procesado correctamente.</p>
+    <p>Número de factura: <strong>{{ generatedInvoice?.invoiceNumber }}</strong></p>
+    <p>Recibirás un email de confirmación en breve.</p>
+    <p class="redirect-message">Serás redirigido a tus pedidos en unos segundos...</p>
+
+    <div class="success-actions">
+      <button class="btn-download" (click)="downloadInvoice()">
+        📄 Descargar Factura
+      </button>
+      <button class="btn-primary" [routerLink]="['/perfil/pedidos']">
+        Ver Mis Pedidos
+      </button>
     </div>
   </div>
 </div>

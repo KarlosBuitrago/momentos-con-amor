@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
+import { InvoiceService, Invoice } from '../../services/invoice.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
@@ -23,10 +24,16 @@ export class CheckoutComponent implements OnInit {
   error: string = '';
   success: boolean = false;
 
+  // Estados del proceso
+  currentStep: 'form' | 'invoice' | 'confirmed' = 'form';
+  generatedInvoice: Invoice | null = null;
+  confirmingPayment: boolean = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private cartService: CartService,
     private authService: AuthService,
+    private invoiceService: InvoiceService,
     private http: HttpClient,
     private router: Router
   ) {
@@ -68,46 +75,162 @@ export class CheckoutComponent implements OnInit {
     }
 
     this.loading = true;
+    this.error = '';
 
-    // Crear objeto de orden
-    const order = {
-      userId: this.authService.getCurrentUser()?.id || 'guest',
-      items: this.cartItems.map(item => ({
-        productId: item.product.id,
-        name: item.product.name,
-        price: item.product.price,
-        quantity: item.quantity
-      })),
-      totalPrice: this.totalPrice,
-      shippingDetails: {
-        fullName: this.checkoutForm.value.fullName,
+    // Preparar datos para la factura
+    const invoiceData = {
+      customer: {
+        name: this.checkoutForm.value.fullName,
         email: this.checkoutForm.value.email,
+        phone: this.checkoutForm.value.phone,
         address: this.checkoutForm.value.address,
         city: this.checkoutForm.value.city,
-        postalCode: this.checkoutForm.value.postalCode,
-        phone: this.checkoutForm.value.phone
+        postalCode: this.checkoutForm.value.postalCode
       },
+      items: this.cartItems.map(item => {
+        // Calcular precio de personalizaciones
+        const customizationsPrice = (item.selectedCustomizations || [])
+          .reduce((sum: number, custom: any) => sum + (custom.price || 0), 0);
+
+        const totalItemPrice = item.product.price + customizationsPrice;
+
+        return {
+          productId: item.product.id || 'unknown',
+          name: item.product.name,
+          description: item.product.description || '',
+          quantity: item.quantity,
+          unitPrice: totalItemPrice,
+          subtotal: totalItemPrice * item.quantity,
+          customizations: (item.selectedCustomizations || []).map((custom: any) => ({
+            name: custom.label,
+            price: custom.price || 0
+          }))
+        };
+      }),
       paymentMethod: this.checkoutForm.value.paymentMethod,
-      status: 'pendiente',
-      createdAt: new Date()
+      userId: this.authService.getCurrentUser()?.id || 'guest'
     };
 
-    // Enviar orden al backend
-    this.http.post(`${environment.apiUrl}/orders`, order)
-      .subscribe(
-        (response: any) => {
-          this.loading = false;
-          this.success = true;
-          this.cartService.clearCart();
-          setTimeout(() => {
-            this.router.navigate(['/perfil/pedidos']);
-          }, 3000);
-        },
-        error => {
-          this.loading = false;
-          this.error = 'Error al procesar el pedido. Por favor, inténtalo de nuevo.';
-          console.error('Error al crear pedido:', error);
+    console.log('Enviando datos de factura:', invoiceData);
+
+    // Generar factura
+    this.invoiceService.generateInvoice(invoiceData).subscribe({
+      next: (invoice) => {
+        this.loading = false;
+        this.generatedInvoice = invoice;
+        this.currentStep = 'invoice';
+        console.log('Factura generada exitosamente:', invoice);
+      },
+      error: (error) => {
+        this.loading = false;
+        console.error('Error completo al generar factura:', error);
+
+        // Mostrar mensaje de error más específico
+        if (error.error && error.error.error) {
+          this.error = `Error: ${error.error.error}`;
+        } else if (error.message) {
+          this.error = `Error: ${error.message}`;
+        } else {
+          this.error = 'Error al generar la factura. Por favor, inténtalo de nuevo.';
         }
-      );
+      }
+    });
+  }
+
+  confirmPayment(): void {
+    if (!this.generatedInvoice) {
+      return;
+    }
+
+    this.confirmingPayment = true;
+    this.error = '';
+
+    this.invoiceService.confirmPayment(this.generatedInvoice.id!).subscribe({
+      next: (updatedInvoice) => {
+        this.confirmingPayment = false;
+        this.generatedInvoice = updatedInvoice;
+        this.currentStep = 'confirmed';
+        this.success = true;
+
+        // Vaciar el carrito
+        this.cartService.clearCart();
+
+        // Redirigir después de 3 segundos
+        setTimeout(() => {
+          this.router.navigate(['/perfil/pedidos']);
+        }, 3000);
+      },
+      error: (error) => {
+        this.confirmingPayment = false;
+        this.error = 'Error al confirmar el pago. Por favor, inténtalo de nuevo.';
+        console.error('Error al confirmar pago:', error);
+      }
+    });
+  }
+
+  cancelInvoice(): void {
+    if (!this.generatedInvoice) {
+      return;
+    }
+
+    if (confirm('¿Estás seguro de que deseas cancelar esta factura?')) {
+      this.invoiceService.cancelInvoice(this.generatedInvoice.id!, 'Cancelado por el usuario').subscribe({
+        next: () => {
+          this.currentStep = 'form';
+          this.generatedInvoice = null;
+        },
+        error: (error) => {
+          this.error = 'Error al cancelar la factura.';
+          console.error('Error al cancelar factura:', error);
+        }
+      });
+    }
+  }
+
+  downloadInvoice(): void {
+    if (!this.generatedInvoice) {
+      return;
+    }
+
+    this.invoiceService.downloadInvoicePDF(this.generatedInvoice.id!).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Factura-${this.generatedInvoice!.invoiceNumber}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        this.error = 'Error al descargar la factura.';
+        console.error('Error al descargar factura:', error);
+      }
+    });
+  }
+
+  formatCurrency(amount: number): string {
+    return this.invoiceService.formatCurrency(amount);
+  }
+
+  formatDate(date: any): string {
+    if (!date) return '';
+
+    // Si es un timestamp de Firestore
+    if (date._seconds) {
+      const jsDate = new Date(date._seconds * 1000);
+      return jsDate.toLocaleDateString('es-CO');
+    }
+
+    // Si ya es una fecha
+    if (date instanceof Date) {
+      return date.toLocaleDateString('es-CO');
+    }
+
+    // Si es un string
+    if (typeof date === 'string') {
+      return new Date(date).toLocaleDateString('es-CO');
+    }
+
+    return '';
   }
 }

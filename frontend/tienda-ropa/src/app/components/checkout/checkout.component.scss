@@ -15,7 +15,7 @@ h2 {
   padding: 20px;
   border-radius: 8px;
   text-align: center;
-  
+
   h3 {
     margin-top: 0;
   }
@@ -24,7 +24,7 @@ h2 {
 .checkout-content {
   display: flex;
   flex-direction: column;
-  
+
   @media (min-width: 992px) {
     flex-direction: row;
     gap: 20px;
@@ -37,11 +37,11 @@ h2 {
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
-  
+
   @media (min-width: 992px) {
     margin-bottom: 0;
   }
-  
+
   h3 {
     margin-top: 0;
     margin-bottom: 20px;
@@ -58,7 +58,7 @@ h2 {
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid #ddd;
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -68,7 +68,7 @@ h2 {
   width: 60px;
   height: 60px;
   margin-right: 15px;
-  
+
   img {
     width: 100%;
     height: 100%;
@@ -79,18 +79,18 @@ h2 {
 
 .item-details {
   flex: 1;
-  
+
   h4 {
     margin: 0 0 5px;
     font-size: 1rem;
   }
-  
+
   p {
     margin: 0;
     font-size: 0.9rem;
     color: #6c757d;
   }
-  
+
   .item-price {
     font-weight: bold;
     color: #dc3545;
@@ -107,7 +107,7 @@ h2 {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
-  
+
   &.final-total {
     font-weight: bold;
     font-size: 1.2rem;
@@ -123,7 +123,7 @@ h2 {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  
+
   h3 {
     margin-top: 0;
     margin-bottom: 20px;
@@ -133,19 +133,19 @@ h2 {
 
 .form-group {
   margin-bottom: 15px;
-  
+
   label {
     display: block;
     margin-bottom: 5px;
     font-weight: 500;
   }
-  
+
   .form-control {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    
+
     &:focus {
       outline: none;
       border-color: #80bdff;
@@ -157,7 +157,7 @@ h2 {
 .form-row {
   display: flex;
   gap: 15px;
-  
+
   .form-group {
     flex: 1;
   }
@@ -172,7 +172,7 @@ h2 {
 .payment-method {
   display: flex;
   align-items: center;
-  
+
   input[type="radio"] {
     margin-right: 10px;
   }
@@ -196,7 +196,7 @@ h2 {
   display: flex;
   gap: 10px;
   margin-top: 20px;
-  
+
   button {
     padding: 12px 20px;
     border: none;
@@ -211,11 +211,11 @@ h2 {
   background-color: #28a745;
   color: white;
   flex: 2;
-  
+
   &:hover {
     background-color: #218838;
   }
-  
+
   &:disabled {
     background-color: #6c757d;
     cursor: not-allowed;
@@ -226,8 +226,339 @@ h2 {
   background-color: #6c757d;
   color: white;
   flex: 1;
-  
+
   &:hover {
     background-color: #5a6268;
   }
+}
+// Indica
+dor de pasos
+.steps-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 30px 0;
+  padding: 20px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e9ecef;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.step.active .step-number {
+  background: #007bff;
+  color: white;
+}
+
+.step.completed .step-number {
+  background: #28a745;
+  color: white;
+}
+
+.step-label {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.step.active .step-label {
+  color: #007bff;
+  font-weight: 600;
+}
+
+.step-divider {
+  width: 80px;
+  height: 2px;
+  background: #e9ecef;
+  margin: 0 10px;
+}
+
+// Factura
+.invoice-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.invoice {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 40px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #007bff;
+}
+
+.company-info h2 {
+  margin: 0 0 5px 0;
+  color: #007bff;
+}
+
+.company-info p {
+  margin: 2px 0;
+  color: #6c757d;
+}
+
+.invoice-info {
+  text-align: right;
+}
+
+.invoice-info h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.invoice-info p {
+  margin: 5px 0;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.status-badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.invoice-customer {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.invoice-customer h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.invoice-customer p {
+  margin: 3px 0;
+  color: #495057;
+}
+
+.invoice-items {
+  margin-bottom: 30px;
+}
+
+.invoice-items table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.invoice-items th {
+  background: #f8f9fa;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.invoice-items td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.customizations {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.customizations small {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.invoice-totals {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  min-width: 300px;
+  padding: 8px 0;
+}
+
+.total-row.final-total {
+  border-top: 2px solid #dee2e6;
+  padding-top: 12px;
+  font-size: 1.2rem;
+  color: #007bff;
+}
+
+.invoice-payment {
+  padding: 15px;
+  background: #e7f3ff;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.invoice-notes {
+  padding: 15px;
+  background: #fff3cd;
+  border-radius: 6px;
+}
+
+.invoice-notes h4 {
+  margin: 0 0 10px 0;
+}
+
+// Acciones de la factura
+.invoice-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-download,
+.btn-cancel,
+.btn-confirm {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-download {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-download:hover {
+  background: #5a6268;
+}
+
+.btn-cancel {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background: #c82333;
+}
+
+.btn-confirm {
+  background: #28a745;
+  color: white;
+}
+
+.btn-confirm:hover:not(:disabled) {
+  background: #218838;
+}
+
+.btn-confirm:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+// Confirmación exitosa
+.success-container {
+  max-width: 600px;
+  margin: 40px auto;
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  background: #28a745;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.success-container h3 {
+  color: #28a745;
+  margin-bottom: 15px;
+}
+
+.success-container p {
+  margin: 10px 0;
+  color: #495057;
+}
+
+.redirect-message {
+  margin-top: 20px;
+  font-style: italic;
+  color: #6c757d;
+}
+
+.success-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.btn-primary {
+  padding: 12px 24px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
 }

@@ -10,6 +10,11 @@ dotenv.config();
 const productRoutes = require('./routes/productRoutes');
 const authRoutes = require('./routes/authRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const customizationRoutes = require('./routes/customizationRoutes');
+const materialRoutes = require('./routes/materialRoutes');
+const tagRoutes = require('./routes/tagRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
+const invoiceRoutes = require('./routes/invoiceRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +28,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/customizations', customizationRoutes);
+app.use('/api/materials', materialRoutes);
+app.use('/api/tags', tagRoutes);
+app.use('/api/upload', uploadRoutes);
+app.use('/api/invoices', invoiceRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {

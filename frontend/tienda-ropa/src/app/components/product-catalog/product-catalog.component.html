@@ -40,7 +40,7 @@
           ...' : '' }}</span>
       </div>
       <div class="product-actions">
-        <button class="view-details-button" [routerLink]="['/productos', product.id]">Ver detalles</button>
+        <button class="view-details-button" (click)="openDetailModal(product)">Ver detalles</button>
         <button class="add-to-cart-button" (click)="addToCart(product)">Añadir al carrito</button>
       </div>
       <div class="product-tags" *ngIf="product.tags?.length">
@@ -50,3 +50,18 @@
     </div>
   </div>
 </div>
+
+<!-- Modales -->
+<app-product-detail-modal
+  [product]="selectedProduct"
+  [isOpen]="isDetailModalOpen"
+  (close)="closeDetailModal()"
+  (addToCart)="onDetailModalAddToCart($event)">
+</app-product-detail-modal>
+
+<app-product-customization-modal
+  [product]="selectedProduct"
+  [isOpen]="isCustomizationModalOpen"
+  (close)="closeCustomizationModal()"
+  (confirm)="onCustomizationConfirm($event)">
+</app-product-customization-modal>

@@ -145,6 +145,10 @@ export class AdminEditProductComponent implements OnInit {
     return this.form.get('category')?.value === 'Muñecos';
   }
 
+  get isMaterial(): boolean {
+    return this.form.get('category')?.value === 'Materiales';
+  }
+
   get isCourse(): boolean {
     return this.form.get('category')?.value === 'Cursos';
   }
@@ -314,19 +318,31 @@ export class AdminEditProductComponent implements OnInit {
   private handleCategoryChange(value: string | null | undefined): void {
     const dollGenderControl = this.form.get('dollGender');
     const personalizationControl = this.form.get('allowPersonalization');
+    const targetAudienceControl = this.form.get('targetAudience');
 
     if (value === 'Muñecos') {
+      // Configuración para Muñecos
       dollGenderControl?.setValidators([Validators.required]);
+      targetAudienceControl?.setValidators([Validators.required]);
       personalizationControl?.setValue(true, { emitEvent: false });
     } else {
+      // Configuración para Materiales y Cursos
       dollGenderControl?.clearValidators();
       dollGenderControl?.setValue('N/A', { emitEvent: false });
+      targetAudienceControl?.clearValidators();
+      targetAudienceControl?.setValue('N/A', { emitEvent: false });
       personalizationControl?.setValue(false, { emitEvent: false });
       this.form.get('isKit')?.setValue(false, { emitEvent: false });
       this.kitIncludes.clear();
+
+      // Limpiar materiales si no es muñeco
+      if (this.madeWith.length > 0) {
+        this.madeWith.clear();
+      }
     }
 
     dollGenderControl?.updateValueAndValidity({ emitEvent: false });
+    targetAudienceControl?.updateValueAndValidity({ emitEvent: false });
   }
 
   private handleKitToggle(isKit: boolean): void {

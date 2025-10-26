@@ -26,7 +26,7 @@
           </select>
         </div>
 
-        <div class="field" [class.invalid]="isInvalid('targetAudience')">
+        <div class="field" *ngIf="isDoll" [class.invalid]="isInvalid('targetAudience')">
           <label for="targetAudience">Público objetivo *</label>
           <select id="targetAudience" formControlName="targetAudience">
             <option *ngFor="let audience of targetAudienceOptions" [value]="audience">{{ audience }}</option>
@@ -83,7 +83,7 @@
     </section>
 
     <!-- MATERIALES -->
-    <section class="form-card">
+    <section class="form-card" *ngIf="isDoll">
       <h3>Materiales *</h3>
       <p class="helper-text">Describe con qué materiales está elaborado el producto.</p>
       <div formArrayName="madeWith" class="array-wrapper">

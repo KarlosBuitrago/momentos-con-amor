@@ -32,10 +32,18 @@
         <span>Dificultad: {{ course.difficulty }}</span>
       </div>
       <div class="product-actions">
-        <button class="view-details-button" [routerLink]="['/productos', course.id]">Ver detalles</button>
+        <button class="view-details-button" (click)="openDetailModal(course)">Ver detalles</button>
         <button class="add-to-cart-button" (click)="addToCart(course)">Añadir al carrito</button>
       </div>
       <p class="availability" *ngIf="course.isAvailable === false">Temporalmente agotado</p>
     </div>
   </div>
 </div>
+
+<!-- Modal de detalle del producto -->
+<app-product-detail-modal
+  [product]="selectedProduct"
+  [isOpen]="isDetailModalOpen"
+  (close)="closeDetailModal()"
+  (addToCart)="onAddToCart($event)">
+</app-product-detail-modal>

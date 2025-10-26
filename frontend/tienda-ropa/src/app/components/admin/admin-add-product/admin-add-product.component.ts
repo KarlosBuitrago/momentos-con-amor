@@ -3,11 +3,20 @@ import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProductService, Product } from '../../../services/product.service';
+import { MaterialSelectorComponent } from '../../selectors/material-selector.component';
+import { CustomizationSelectorComponent } from '../../selectors/customization-selector.component';
+import { TagSelectorComponent } from '../../selectors/tag-selector.component';
 
 @Component({
   selector: 'app-admin-add-product',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MaterialSelectorComponent,
+    CustomizationSelectorComponent,
+    TagSelectorComponent
+  ],
   templateUrl: './admin-add-product.component.html',
   styleUrls: ['./admin-add-product.component.scss']
 })
@@ -28,6 +37,11 @@ export class AdminAddProductComponent {
   statusType: 'success' | 'error' | '' = '';
   isSubmitting = false;
   readonly backendEndpoint: string;
+
+  // IDs seleccionados para los nuevos selectores
+  selectedMaterialIds: string[] = [];
+  selectedCustomizationIds: string[] = [];
+  selectedTagIds: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -64,6 +78,10 @@ export class AdminAddProductComponent {
 
   get isDoll(): boolean {
     return this.form.get('category')?.value === 'Muñecos';
+  }
+
+  get isMaterial(): boolean {
+    return this.form.get('category')?.value === 'Materiales';
   }
 
   get isCourse(): boolean {
@@ -131,6 +149,18 @@ export class AdminAddProductComponent {
 
   trackByIndex(index: number): number {
     return index;
+  }
+
+  onMaterialsChanged(materialIds: string[]): void {
+    this.selectedMaterialIds = materialIds;
+  }
+
+  onCustomizationsChanged(customizationIds: string[]): void {
+    this.selectedCustomizationIds = customizationIds;
+  }
+
+  onTagsChanged(tagIds: string[]): void {
+    this.selectedTagIds = tagIds;
   }
 
   onSubmit(): void {
@@ -218,6 +248,11 @@ export class AdminAddProductComponent {
     this.imageGallery.clear();
     this.tags.clear();
     this.customizations.clear();
+
+    // Limpiar selectores
+    this.selectedMaterialIds = [];
+    this.selectedCustomizationIds = [];
+    this.selectedTagIds = [];
   }
 
   private buildForm(): FormGroup {
@@ -257,19 +292,31 @@ export class AdminAddProductComponent {
   private handleCategoryChange(value: string | null | undefined): void {
     const dollGenderControl = this.form.get('dollGender');
     const personalizationControl = this.form.get('allowPersonalization');
+    const targetAudienceControl = this.form.get('targetAudience');
 
     if (value === 'Muñecos') {
+      // Configuración para Muñecos
       dollGenderControl?.setValidators([Validators.required]);
+      targetAudienceControl?.setValidators([Validators.required]);
       personalizationControl?.setValue(true, { emitEvent: false });
     } else {
+      // Configuración para Materiales y Cursos
       dollGenderControl?.clearValidators();
       dollGenderControl?.setValue('N/A', { emitEvent: false });
+      targetAudienceControl?.clearValidators();
+      targetAudienceControl?.setValue('N/A', { emitEvent: false });
       personalizationControl?.setValue(false, { emitEvent: false });
       this.form.get('isKit')?.setValue(false, { emitEvent: false });
       this.kitIncludes.clear();
+
+      // Limpiar materiales si no es muñeco
+      if (this.madeWith.length > 0) {
+        this.madeWith.clear();
+      }
     }
 
     dollGenderControl?.updateValueAndValidity({ emitEvent: false });
+    targetAudienceControl?.updateValueAndValidity({ emitEvent: false });
   }
 
   private handleKitToggle(isKit: boolean): void {
