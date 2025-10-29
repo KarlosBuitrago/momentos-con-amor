@@ -222,7 +222,8 @@ export class AdminEditProductComponent implements OnInit {
     const baseMaterials = this.normalizeEntries(raw.madeWith ?? []);
     const kitMaterials = this.normalizeEntries(raw.kitIncludes ?? []);
 
-    if (baseMaterials.length === 0) {
+    // Solo validar materiales base para Muñecos
+    if (this.isDoll && baseMaterials.length === 0) {
       this.setStatus('error', 'Agrega al menos un material base.');
       return;
     }
