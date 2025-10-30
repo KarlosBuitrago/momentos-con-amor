@@ -23,18 +23,20 @@ class Tag {
         query = query.where('isActive', '==', active);
       }
       
-      // Ordenar por uso o nombre
-      if (filters.sortBy === 'usage') {
-        query = query.orderBy('usageCount', 'desc');
-      } else {
-        query = query.orderBy('name', 'asc');
-      }
-      
       const snapshot = await query.get();
-      return snapshot.docs.map(doc => ({
+      let results = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
+      
+      // Ordenar en memoria para evitar índices compuestos
+      if (filters.sortBy === 'usage') {
+        results.sort((a, b) => (b.usageCount || 0) - (a.usageCount || 0));
+      } else {
+        results.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      }
+      
+      return results;
     } catch (error) {
       console.error('Error al obtener tags:', error);
       throw error;

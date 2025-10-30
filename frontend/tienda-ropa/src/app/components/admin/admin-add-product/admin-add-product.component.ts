@@ -6,6 +6,7 @@ import { ProductService, Product } from '../../../services/product.service';
 import { MaterialSelectorComponent } from '../../selectors/material-selector.component';
 import { CustomizationSelectorComponent } from '../../selectors/customization-selector.component';
 import { TagSelectorComponent } from '../../selectors/tag-selector.component';
+import { SmartImageUploadService } from '../../../services/smart-image-upload.service';
 
 @Component({
   selector: 'app-admin-add-product',
@@ -43,9 +44,14 @@ export class AdminAddProductComponent {
   selectedCustomizationIds: string[] = [];
   selectedTagIds: string[] = [];
 
+  // Archivos seleccionados para carga local
+  selectedMainImage: File | null = null;
+  selectedGalleryImages: Map<number, File> = new Map();
+
   constructor(
     private fb: FormBuilder,
     private productService: ProductService,
+    private smartUploadService: SmartImageUploadService,
     private destroyRef: DestroyRef
   ) {
     this.form = this.buildForm();
@@ -163,7 +169,72 @@ export class AdminAddProductComponent {
     this.selectedTagIds = tagIds;
   }
 
-  onSubmit(): void {
+  onMainImageFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) return;
+
+    // Validar archivo
+    if (!this.validateImageFile(file)) {
+      this.setStatus('error', 'Formato de archivo no válido. Use PNG, JPG, JPEG, GIF o WebP');
+      input.value = '';
+      return;
+    }
+
+    this.selectedMainImage = file;
+
+    // Generar vista previa
+    const reader = new FileReader();
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      const previewUrl = e.target?.result as string;
+      this.form.patchValue({ imageUrl: previewUrl });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  onGalleryImageFileSelected(index: number, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) return;
+
+    // Validar archivo
+    if (!this.validateImageFile(file)) {
+      this.setStatus('error', 'Formato de archivo no válido. Use PNG, JPG, JPEG, GIF o WebP');
+      input.value = '';
+      return;
+    }
+
+    this.selectedGalleryImages.set(index, file);
+
+    // Generar vista previa
+    const reader = new FileReader();
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      const previewUrl = e.target?.result as string;
+      this.imageGallery.at(index).setValue(previewUrl);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  clearMainImage(fileInput: HTMLInputElement): void {
+    this.selectedMainImage = null;
+    fileInput.value = '';
+    this.form.patchValue({ imageUrl: this.defaultImage });
+  }
+
+  clearGalleryImage(index: number, fileInput: HTMLInputElement): void {
+    this.selectedGalleryImages.delete(index);
+    fileInput.value = '';
+    this.imageGallery.at(index).setValue('');
+  }
+
+  private validateImageFile(file: File): boolean {
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'];
+    return validTypes.includes(file.type);
+  }
+
+  async onSubmit(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -185,6 +256,8 @@ export class AdminAddProductComponent {
     }
 
     this.isSubmitting = true;
+
+    // Las imágenes ya están en Base64 en el formulario, no necesitamos subirlas
 
     const imageGalleryUrls = this.normalizeEntries(raw.imageGallery ?? []);
     const productTags = this.normalizeEntries(raw.tags ?? []);
@@ -254,6 +327,10 @@ export class AdminAddProductComponent {
     this.selectedMaterialIds = [];
     this.selectedCustomizationIds = [];
     this.selectedTagIds = [];
+
+    // Limpiar archivos seleccionados
+    this.selectedMainImage = null;
+    this.selectedGalleryImages.clear();
   }
 
   private buildForm(): FormGroup {

@@ -1,0 +1,73 @@
+<div class="image-upload-container">
+  <!-- Hidden file input -->
+  <input
+    #fileInput
+    type="file"
+    [accept]="acceptedFormats"
+    (change)="onFileSelected($event)"
+    style="display: none"
+  />
+
+  <!-- Upload button -->
+  <button
+    type="button"
+    class="upload-button"
+    (click)="onButtonClick()"
+    [disabled]="state.isUploading"
+    title="Seleccionar imagen desde el equipo"
+  >
+    <span class="button-icon">📁</span>
+    <span class="button-text">{{ label }}</span>
+  </button>
+
+  <!-- Preview section -->
+  <div class="preview-section" *ngIf="displayPreview || hasSelection">
+    <!-- Image preview -->
+    <div class="preview-image-wrapper" *ngIf="displayPreview">
+      <img
+        [src]="displayPreview"
+        alt="Vista previa de imagen"
+        class="preview-image"
+        loading="lazy"
+      />
+    </div>
+
+    <!-- File info -->
+    <div class="file-info" *ngIf="hasSelection">
+      <div class="file-name">{{ state.fileName }}</div>
+      <div class="file-size">{{ fileSizeFormatted }}</div>
+
+      <!-- Warning for large files -->
+      <div class="file-warning" *ngIf="showWarning">
+        ⚠️ Archivo grande. Se comprimirá durante la carga.
+      </div>
+
+      <!-- Clear button -->
+      <button
+        type="button"
+        class="clear-button"
+        (click)="clearSelection()"
+        [disabled]="state.isUploading"
+      >
+        ✕ Limpiar selección
+      </button>
+    </div>
+
+    <!-- Loading state -->
+    <div class="loading-state" *ngIf="state.isUploading">
+      <div class="loading-text">Subiendo imagen... {{ state.uploadProgress }}%</div>
+      <div class="progress-bar">
+        <div
+          class="progress-fill"
+          [style.width.%]="state.uploadProgress"
+        ></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error message -->
+  <div class="error-message" *ngIf="state.error">
+    <span class="error-icon">⚠️</span>
+    <span class="error-text">{{ state.error }}</span>
+  </div>
+</div>

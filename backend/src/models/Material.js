@@ -23,14 +23,16 @@ class Material {
         query = query.where('isActive', '==', active);
       }
       
-      // Ordenar por nombre
-      query = query.orderBy('name', 'asc');
-      
       const snapshot = await query.get();
-      return snapshot.docs.map(doc => ({
+      let results = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
+      
+      // Ordenar en memoria para evitar índices compuestos
+      results.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      
+      return results;
     } catch (error) {
       console.error('Error al obtener materiales:', error);
       throw error;

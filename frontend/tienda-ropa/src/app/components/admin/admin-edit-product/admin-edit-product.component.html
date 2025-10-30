@@ -61,8 +61,13 @@
       <div class="field-grid">
         <div class="field" [class.invalid]="isInvalid('imageUrl')">
           <label for="imageUrl">URL de la imagen principal *</label>
-          <input id="imageUrl" type="text" formControlName="imageUrl" placeholder="assets/images/imagen 5.jpg">
-          <small *ngIf="isInvalid('imageUrl')">Proporciona la ruta o URL de la imagen principal.</small>
+          <div class="input-with-file">
+            <input id="imageUrl" type="text" formControlName="imageUrl" placeholder="assets/images/imagen 5.jpg o selecciona un archivo">
+            <input #mainImageFile type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" (change)="onMainImageFileSelected($event)" style="display: none">
+            <button type="button" class="btn-file" (click)="mainImageFile.click()" title="Seleccionar imagen desde el equipo">📁</button>
+            <button type="button" class="btn-clear" *ngIf="selectedMainImage" (click)="clearMainImage(mainImageFile)" title="Limpiar imagen seleccionada">🗑️</button>
+          </div>
+          <small *ngIf="isInvalid('imageUrl')">Proporciona la ruta, URL o selecciona una imagen desde tu equipo.</small>
         </div>
 
         <div class="image-preview">
@@ -75,7 +80,12 @@
       <p class="helper-text">Agrega más imágenes para mostrar diferentes ángulos del producto.</p>
       <div formArrayName="imageGallery" class="array-wrapper">
         <div class="array-row" *ngFor="let control of imageGallery.controls; let i = index; trackBy: trackByIndex">
-          <input [formControlName]="i" type="text" placeholder="assets/images/imagen 6.jpg">
+          <div class="input-with-file">
+            <input [formControlName]="i" type="text" placeholder="URL o selecciona un archivo">
+            <input #galleryImageFile type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" (change)="onGalleryImageFileSelected(i, $event)" style="display: none">
+            <button type="button" class="btn-file" (click)="galleryImageFile.click()" title="Seleccionar imagen">📁</button>
+            <button type="button" class="btn-clear" *ngIf="selectedGalleryImages.has(i)" (click)="clearGalleryImage(i, galleryImageFile)" title="Limpiar imagen">🗑️</button>
+          </div>
           <button type="button" (click)="removeImageGalleryField(i)">Eliminar</button>
         </div>
       </div>

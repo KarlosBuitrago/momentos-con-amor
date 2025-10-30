@@ -81,7 +81,12 @@ export class SmartImageUploadService {
    */
   uploadMultipleImages(files: File[], folder: string = 'products'): Observable<SmartUploadResult[]> {
     const uploadPromises = files.map(file =>
-      this.uploadImage(file, folder).toPromise()
+      this.uploadImage(file, folder).toPromise().then(result => {
+        if (!result) {
+          throw new Error('Upload failed');
+        }
+        return result;
+      })
     );
     return from(Promise.all(uploadPromises));
   }
